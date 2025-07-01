@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="style.css">
+  <title>Jeu combat 4 directions amélioré</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    canvas {
+      background: #111;
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #333;
+      background: rgb(20, 182, 125);
+    }
+    #startScreen,
+    #endScreen,
+    #pauseScreen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      z-index: 10;
+    }
+    #endScreen, #pauseScreen { display: none; }
+    button {
+      padding: 10px 25px;
+      font-size: 18px;
+      margin-top: 20px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #444;
+    }
+    .cooldown-bar {
+      width: 40px;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .cooldown-fill {
+      height: 100%;
+      background: #0f0;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<div id="startScreen">
+  <h1>⚔️ Combat POO 4 directions amélioré ⚔️</h1>
+  <p>2 manettes pour jouer.<br>
+     Déplacement & tir avec joystick.<br>
+     Tir directionnel uniquement haut, bas, gauche, droite.<br>
+     Tir avec bouton X (bouton 2).<br>
+     Appuyez sur P pour mettre en pause.</p>
+  <button onclick="startGame()">Commencer</button>
+</div>
+
+<div id="endScreen">
+  <h2 id="endMessage">Fin du jeu</h2>
+  <button onclick="restartGame()">Rejouer</button>
+</div>
+
+<div id="pauseScreen">
+  <h2>⏸️ Jeu en pause</h2>
+  <button onclick="togglePause()">Reprendre</button>
+</div>
+
+<script>
+const wallImage = new Image();
+wallImage.src = "mur_de10.png";
+
+class Wall {
+  constructor(x, y, width, height, image) {
+    this.x = x; this.y = y;
+    this.width = width; this.height = height;
+    this.image = image;
+    this.image = new Image();
+    this.image.src = "mur_de10.png";
+  }
+  draw(ctx) {
+  if (wallImage.complete) {
+    // Si l'image est chargée, on dessine l'image étirée sur le mur
+    ctx.drawImage(wallImage, this.x, this.y, this.width, this.height);
+  } else {
+    // Sinon on affiche une couleur de fallback pendant le chargement
+    ctx.fillStyle = '#555';
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+}
+
+  collidesWith(x, y, w, h) {
+    return !(x + w <= this.x ||
+             x >= this.x + this.width ||
+             y + h <= this.y ||
+             y >= this.y + this.height);
+  }
+}
+
+class Bullet {
+  constructor(x, y, color, direction) {
+    this.x = x;
+    this.y = y;
+    this.radius = 5;
+    this.color = color;
+    this.speed = 30;
+    this.dx = direction.x;
+    this.dy = direction.y;
+    this.hit = false;
+  }
+  update() {
+    this.x += this.dx * this.speed;
+    this.y += this.dy * this.speed;
+  }
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  isOutOfBounds() {
+    return this.x < 0 || this.x > 800 || this.y < 0 || this.y > 600;
+  }
+  checkCollision(player) {
+    // Cercle-rectangle collision
+    const closestX = Math.max(player.x, Math.min(this.x, player.x + player.width));
+    const closestY = Math.max(player.y, Math.min(this.y, player.y + player.height));
+    const distX = this.x - closestX;
+    const distY = this.y - closestY;
+    return (distX * distX + distY * distY) < (this.radius * this.radius) && player.alive;
+  }
+}
+
+class Player {
+  constructor(x, y, color, gamepadIndex) {
+    this.x = x; this.y = y;
+    this.width = 40; this.height = 40;
+    this.color = color;
+    this.gamepadIndex = gamepadIndex;
+    this.speed = 7;
+    this.bullets = [];
+    this.hasGun = true;
+    this.cooldownMax = 20;
+    this.cooldown = 0;
+    this.health = 10;
+    this.alive = true;
+    this.shootDirection = { x: 1, y: 0 };
+  }
+
+  reset(x, y) {
+    this.x = x;
+    this.y = y;
+    this.health = 10;
+    this.alive = true;
+    this.bullets = [];
+    this.cooldown = 0;
+    this.shootDirection = { x: 1, y: 0 };
+  }
+
+  moveWithCollision(dx, dy, walls) {
+    let newX = this.x + dx;
+    let newY = this.y + dy;
+
+    // collision horizontal
+    let collisionX = walls.some(wall => wall.collidesWith(newX, this.y, this.width, this.height));
+    if (!collisionX) this.x = newX;
+
+    // collision vertical
+    let collisionY = walls.some(wall => wall.collidesWith(this.x, newY, this.width, this.height));
+    if (!collisionY) this.y = newY;
+
+    // limite du canvas
+    this.x = Math.min(Math.max(this.x, 0), 800 - this.width);
+    this.y = Math.min(Math.max(this.y, 0), 600 - this.height);
+  }
+
+  update(opponent, walls) {
+  if (!this.alive) return;
+
+  const gp = navigator.getGamepads()[this.gamepadIndex];
+  if (!gp) return;
+
+  // Déplacement 4 directions uniquement (sans diagonales)
+  let axisMoveX = gp.axes[0];
+  let axisMoveY = gp.axes[1];
+  let moveX = 0;
+  let moveY = 0;
+
+  if (Math.abs(axisMoveX) > Math.abs(axisMoveY)) {
+    if (axisMoveX > 0.5) moveX = this.speed;    // droite
+    else if (axisMoveX < -0.5) moveX = -this.speed;  // gauche
+  } else {
+    if (axisMoveY > 0.5) moveY = this.speed;    // bas
+    else if (axisMoveY < -0.5) moveY = -this.speed;  // haut
+  }
+
+  this.moveWithCollision(moveX, moveY, walls);
+
+  // Direction de tir basée sur joystick droit (axes 2 et 3), aussi sans diagonales
+  let axisShootX = gp.axes[2];
+  let axisShootY = gp.axes[3];
+  let shootDir = null;
+
+  if (this.color === 'red') {
+    this.shootDirection = { x: 1, y: 0 }; // vers la gauche
+  } else if (this.color === 'blue') {
+    this.shootDirection = { x: -1, y: 0 }; // vers la droite
+  }
+
+  // Tir bouton X (bouton 2)
+  if (this.hasGun && gp.buttons[2].pressed && this.cooldown <= 0 && this.shootDirection) {
+    this.shoot();
+    this.cooldown = 20;
+  }
+  if (this.cooldown > 0) this.cooldown--;
+
+  // Mise à jour des balles
+  this.bullets.forEach(b => b.update());
+  this.bullets = this.bullets.filter(b => {
+    if (walls.some(wall => wall.collidesWith(b.x - b.radius, b.y - b.radius, b.radius * 2, b.radius * 2))) return false;
+    if (b.checkCollision(opponent)) {
+      opponent.health--;
+      b.hit = true;
+      if (opponent.health <= 0 && opponent.alive) {
+        opponent.alive = false;
+        showEndScreen(this.color);
+      }
+    }
+    return !b.isOutOfBounds() && !b.hit;
+  });
+}
+
+
+
+  shoot() {
+    const startX = this.x + this.width / 2 + this.shootDirection.x * this.width / 2;
+    const startY = this.y + this.height / 2 + this.shootDirection.y * this.height / 2;
+    const bullet = new Bullet(startX, startY, this.color, this.shootDirection);
+    this.bullets.push(bullet);
+  }
+
+  draw(ctx) {
+    if (!this.alive) return;
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    // Indicateur direction de tir (flèche)
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    const centerX = this.x + this.width / 2;
+    const centerY = this.y + this.height / 2;
+    const dir = this.shootDirection;
+    const arrowSize = 10;
+    ctx.moveTo(centerX + dir.x * arrowSize, centerY + dir.y * arrowSize);
+    if (dir.x !== 0) {
+      ctx.lineTo(centerX + dir.x * (arrowSize - 5), centerY - 5);
+      ctx.lineTo(centerX + dir.x * (arrowSize - 5), centerY + 5);
+    } else {
+      ctx.lineTo(centerX - 5, centerY + dir.y * (arrowSize - 5));
+      ctx.lineTo(centerX + 5, centerY + dir.y * (arrowSize - 5));
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // Vie affichée
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.fillText(`❤️: ${this.health}`, this.x, this.y - 10);
+
+    // Barre de cooldown
+    ctx.fillStyle = '#333';
+    ctx.fillRect(this.x, this.y + this.height + 2, this.width, 6);
+    if(this.cooldown > 0){
+      const fillWidth = this.width * (1 - this.cooldown / this.cooldownMax);
+      ctx.fillStyle = '#0f0';
+      ctx.fillRect(this.x, this.y + this.height + 2, fillWidth, 6);
+    }
+
+    this.bullets.forEach(b => b.draw(ctx));
+  }
+}
+
+// Variables globales
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let player1 = new Player(100, 300, 'red', 0);
+let player2 = new Player(700, 300, 'blue', 1);
+let gameRunning = false;
+let gamePaused = false;
+
+const walls = [
+  // le mur de font le contour du canvas
+  new Wall(0, 0, canvas.width, 10),
+  new Wall(0, 0, 10, canvas.height),
+  new Wall(canvas.width - 20, 0, 20, canvas.height),
+  new Wall(0, canvas.height - 20, canvas.width, 20),
+  new Wall(350, 25, 50, 100),
+  new Wall(250, 480, 50, 100),
+  new Wall(150, 150, 50, 150),
+  new Wall(600, 400, 50, 150)
+];
+
+// Gestion dynamique des gamepads
+function getConnectedGamepads() {
+  return [...navigator.getGamepads()].filter(gp => gp !== null);
+}
+
+function gameLoop() {
+  if (!gameRunning || gamePaused) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  walls.forEach(wall => wall.draw(ctx));
+
+  player1.update(player2, walls);
+  player2.update(player1, walls);
+
+  player1.draw(ctx);
+  player2.draw(ctx);
+
+  requestAnimationFrame(gameLoop);
+}
+
+function showEndScreen(winnerColor) {
+  document.getElementById("endScreen").style.display = "flex";
+  document.getElementById("endMessage").innerText = `🏆 Le joueur ${winnerColor.toUpperCase()} a gagné !`;
+  gameRunning = false;
+}
+
+function startGame() {
+  player1.reset(100, 300);
+  player2.reset(700, 300);
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("endScreen").style.display = "none";
+  document.getElementById("pauseScreen").style.display = "none";
+  gameRunning = true;
+  gamePaused = false;
+  requestAnimationFrame(gameLoop);
+}
+
+function restartGame() {
+  startGame();
+}
+
+function togglePause() {
+  if (!gameRunning) return;
+  gamePaused = !gamePaused;
+  document.getElementById("pauseScreen").style.display = gamePaused ? "flex" : "none";
+  if (!gamePaused) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+// Touche P pour pause/reprise
+window.addEventListener('keydown', e => {
+  if (e.key.toLowerCase() === 'p') {
+    togglePause();
+  }
+});
+
+window.addEventListener("gamepadconnected", (e) => {
+  console.log("Manette connectée à l'index", e.gamepad.index);
+});
+
+window.addEventListener("gamepaddisconnected", (e) => {
+  console.log("Manette déconnectée de l'index", e.gamepad.index);
+});
+</script>
+
+</body>
+</html>

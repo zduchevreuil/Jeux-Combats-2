@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détection de manettes</title>
+</head>
+<body>
+  <h1>Détection de manettes (Gamepad)</h1>
+  <p id="status">En attente de connexion...</p>
+  <p id="buttonPressed">Boutton Pressé : <span id="buttonPressed">NON</span></p>
+
+  <script>
+    const status = document.getElementById('status');
+    const buttonPressed = document.getElementById('buttonPressed');
+
+    // Quand une manette est connectée
+    window.addEventListener("gamepadconnected", (event) => {
+      const gp = event.gamepad;
+      status.textContent = `Manette connectée : ${gp.id} (Index ${gp.index})`;
+      console.log(`Manette connectée : ${gp.id}`);
+      startPolling();
+    });
+
+    // Quand une manette est déconnectée
+    window.addEventListener("gamepaddisconnected", (event) => {
+      status.textContent = `Manette déconnectée (Index ${event.gamepad.index})`;
+      console.log("Manette déconnectée");
+    });
+
+    // Fonction de lecture des états des boutons/sticks
+    function pollGamepads() {
+      const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+
+      for (let i = 0; i < gamepads.length; i++) {
+        const gp = gamepads[i];
+        if (!gp) continue;
+
+        // Exemple : afficher l’état des boutons
+        gp.buttons.forEach((button, index) => {
+          if (button.pressed) {
+            console.log(`Bouton ${index} pressé`);
+            buttonPressed.textContent = `Bouton ${index} pressé`;
+          }
+        });
+      }
+    }
+
+    // Boucle pour vérifier l’état des manettes
+    function startPolling() {
+      function update() {
+        pollGamepads();
+        requestAnimationFrame(update);
+      }
+      update();
+    }
+  </script>
+</body>
+</html>
