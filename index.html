@@ -5,63 +5,296 @@
   <link rel="stylesheet" href="style.css">
   <title>Jeu combat 4 directions amélioré</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
       margin: 0;
-      background: #000;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #001122 100%);
       color: white;
-      font-family: sans-serif;
+      font-family: 'Rajdhani', sans-serif;
       text-align: center;
       overflow: hidden;
       user-select: none;
+      min-height: 100vh;
+      position: relative;
     }
+    
+    /* Particules d'arrière-plan animées */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="0.5" fill="rgba(100,200,255,0.2)"/><circle cx="40" cy="80" r="0.8" fill="rgba(255,100,100,0.15)"/><circle cx="90" cy="90" r="0.3" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      animation: twinkle 20s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    @keyframes twinkle {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-100px); }
+    }
+    
     canvas {
-      background: #111;
+      background: linear-gradient(45deg, #0a4d68 0%, #1a7a8a 25%, #2d9da0 50%, #4fb3d9 75%, #6dd5ed 100%);
       display: block;
       margin: 20px auto;
-      border: 2px solid #333;
-      background: rgb(20, 182, 125);
+      border: 3px solid transparent;
+      border-radius: 15px;
+      box-shadow: 
+        0 0 30px rgba(109, 213, 237, 0.3),
+        0 0 60px rgba(109, 213, 237, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      animation: gameCanvasGlow 4s ease-in-out infinite alternate;
     }
+    
+    @keyframes gameCanvasGlow {
+      0% { 
+        box-shadow: 
+          0 0 30px rgba(109, 213, 237, 0.3),
+          0 0 60px rgba(109, 213, 237, 0.2),
+          inset 0 0 20px rgba(255, 255, 255, 0.1);
+      }
+      100% { 
+        box-shadow: 
+          0 0 40px rgba(109, 213, 237, 0.5),
+          0 0 80px rgba(109, 213, 237, 0.3),
+          inset 0 0 30px rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    canvas:hover {
+      transform: scale(1.02);
+      box-shadow: 
+        0 0 50px rgba(109, 213, 237, 0.6),
+        0 0 100px rgba(109, 213, 237, 0.4);
+    }
+    
     #startScreen,
     #endScreen,
     #pauseScreen {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: radial-gradient(circle at center, rgba(0,0,50,0.95) 0%, rgba(0,0,0,0.95) 70%);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       font-size: 24px;
       z-index: 10;
+      animation: screenSlideIn 0.5s ease-out;
     }
+    
+    @keyframes screenSlideIn {
+      from { 
+        opacity: 0; 
+        transform: translateY(-50px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0);
+      }
+    }
+    
     #endScreen, #pauseScreen { display: none; }
+    
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: 3rem;
+      margin-bottom: 30px;
+      text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.5),
+        0 0 20px rgba(109, 213, 237, 0.5),
+        0 0 30px rgba(109, 213, 237, 0.3);
+      animation: titlePulse 2s ease-in-out infinite alternate;
+      background: linear-gradient(45deg, #6dd5ed, #2193b0, #6dd5ed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: titlePulse 2s ease-in-out infinite alternate, gradientShift 3s ease-in-out infinite;
+    }
+    
+    @keyframes titlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    h2 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0);
+      }
+    }
+    
+    p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+      animation: fadeInUp 0.8s ease-out;
+    }
+    
     button {
-      padding: 10px 25px;
-      font-size: 18px;
+      padding: 15px 35px;
+      font-size: 20px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
       margin-top: 20px;
       cursor: pointer;
-      background: #222;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
       color: white;
-      border: 1px solid #555;
-      border-radius: 5px;
-      transition: background 0.3s;
+      border: none;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 5px 15px rgba(102, 126, 234, 0.4),
+        0 0 20px rgba(102, 126, 234, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      animation: buttonGlow 2s ease-in-out infinite alternate;
     }
+    
+    @keyframes buttonGlow {
+      0% { 
+        box-shadow: 
+          0 5px 15px rgba(102, 126, 234, 0.4),
+          0 0 20px rgba(102, 126, 234, 0.2);
+      }
+      100% { 
+        box-shadow: 
+          0 8px 25px rgba(102, 126, 234, 0.6),
+          0 0 30px rgba(102, 126, 234, 0.4);
+      }
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    button:hover::before {
+      left: 100%;
+    }
+    
     button:hover {
-      background: #444;
+      transform: translateY(-3px) scale(1.05);
+      background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
+      box-shadow: 
+        0 10px 30px rgba(102, 126, 234, 0.6),
+        0 0 40px rgba(102, 126, 234, 0.4);
     }
+    
+    button:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+    
     .cooldown-bar {
       width: 40px;
       height: 6px;
-      background: #333;
+      background: rgba(51, 51, 51, 0.8);
       border-radius: 3px;
       margin-top: 4px;
       overflow: hidden;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
     }
+    
     .cooldown-fill {
       height: 100%;
-      background: #0f0;
+      background: linear-gradient(90deg, #00ff00, #00cc00, #00ff00);
       width: 0%;
       transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+      animation: cooldownShine 1s ease-in-out infinite alternate;
+    }
+    
+    @keyframes cooldownShine {
+      0% { box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
+      100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.8); }
+    }
+    
+    /* Effet de particules sur les écrans */
+    #startScreen::before,
+    #endScreen::before,
+    #pauseScreen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="0.5" fill="rgba(255,255,255,0.3)"/><circle cx="90" cy="20" r="0.3" fill="rgba(109,213,237,0.4)"/><circle cx="20" cy="90" r="0.4" fill="rgba(255,255,255,0.2)"/><circle cx="80" cy="80" r="0.2" fill="rgba(109,213,237,0.3)"/></svg>') repeat;
+      animation: particleFloat 15s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes particleFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-100px) rotate(360deg); }
+    }
+    
+    /* Animation d'apparition pour les éléments */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 900px) {
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 2rem; }
+      p { font-size: 1rem; }
+      button { 
+        padding: 12px 25px; 
+        font-size: 16px; 
+      }
+      canvas {
+        width: 90vw;
+        height: 67.5vw;
+        max-width: 800px;
+        max-height: 600px;
+      }
     }
   </style>
 </head>
@@ -75,7 +308,10 @@
      Déplacement & tir avec joystick.<br>
      Tir directionnel uniquement haut, bas, gauche, droite.<br>
      Tir avec bouton X (bouton 2).<br>
-     Appuyez sur P pour mettre en pause.</p>
+     Bouclier avec bouton Y (bouton 3) - empêche le tir.<br>
+     Changer d'arme avec bouton A (bouton 0) : Glock17 ↔ AK47.<br>
+     Appuyez sur P ou bouton Start pour mettre en pause.<br>
+     Appuyez sur F pour le plein écran.</p>
   <button onclick="startGame()">Commencer</button>
 </div>
 
@@ -100,17 +336,46 @@ class Wall {
     this.image = image;
     this.image = new Image();
     this.image.src = "mur_de10.png";
+    this.animationTime = Math.random() * 100; // Décalage aléatoire pour l'animation
   }
+  
   draw(ctx) {
-  if (wallImage.complete) {
-    // Si l'image est chargée, on dessine l'image étirée sur le mur
-    ctx.drawImage(wallImage, this.x, this.y, this.width, this.height);
-  } else {
-    // Sinon on affiche une couleur de fallback pendant le chargement
-    ctx.fillStyle = '#555';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.animationTime++;
+    
+    ctx.save();
+    
+    if (wallImage.complete) {
+      // Effet de lueur subtile pour les murs
+      const glowIntensity = Math.sin(this.animationTime * 0.05) * 0.3 + 0.7;
+      ctx.shadowColor = 'rgba(100, 150, 200, 0.3)';
+      ctx.shadowBlur = 5 * glowIntensity;
+      
+      // Dessiner l'image du mur
+      ctx.drawImage(wallImage, this.x, this.y, this.width, this.height);
+      
+      // Ajouter un effet de relief
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * glowIntensity})`;
+      ctx.fillRect(this.x, this.y, this.width, 2);
+      
+      ctx.fillStyle = `rgba(0, 0, 0, ${0.2 * glowIntensity})`;
+      ctx.fillRect(this.x, this.y + this.height - 2, this.width, 2);
+    } else {
+      // Couleur de fallback avec animation
+      const baseColor = 85;
+      const variation = Math.sin(this.animationTime * 0.1) * 20;
+      const color = Math.floor(baseColor + variation);
+      
+      ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+      
+      // Effet de bordure animée
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + Math.sin(this.animationTime * 0.08) * 0.2})`;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(this.x, this.y, this.width, this.height);
+    }
+    
+    ctx.restore();
   }
-}
 
   collidesWith(x, y, w, h) {
     return !(x + w <= this.x ||
@@ -119,6 +384,10 @@ class Wall {
              y >= this.y + this.height);
   }
 }
+
+const shootSound = new Audio("pixel-explosion-319166.mp3");
+shootSound.volume = 0.3; // Volume ajustable (0.0 à 1.0)
+
 
 class Bullet {
   constructor(x, y, color, direction) {
@@ -130,23 +399,70 @@ class Bullet {
     this.dx = direction.x;
     this.dy = direction.y;
     this.hit = false;
+    this.trail = []; // Traînée de la balle
+    this.life = 0; // Durée de vie pour l'animation
+    this.maxTrailLength = 8;
+    this.damage = 1; // Dégâts par défaut
   }
+  
   update() {
     this.x += this.dx * this.speed;
     this.y += this.dy * this.speed;
+    this.life++;
+    
+    // Ajouter position actuelle à la traînée
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > this.maxTrailLength) {
+      this.trail.shift();
+    }
   }
+  
   draw(ctx) {
+    // Dessiner la traînée
+    ctx.save();
+    for (let i = 0; i < this.trail.length; i++) {
+      const alpha = (i + 1) / this.trail.length * 0.5;
+      const size = this.radius * ((i + 1) / this.trail.length);
+      
+      ctx.beginPath();
+      ctx.arc(this.trail[i].x, this.trail[i].y, size, 0, 2 * Math.PI);
+      ctx.fillStyle = this.color.replace('rgb', 'rgba').replace(')', `, ${alpha})`);
+      ctx.fill();
+    }
+    ctx.restore();
+    
+    // Dessiner la balle principale avec effet de pulsation
+    ctx.save();
+    const pulseSize = this.radius + Math.sin(this.life * 0.3) * 2;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, pulseSize, 0, 2 * Math.PI);
+    
+    // Gradient radial pour l'effet de lueur
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, pulseSize);
+    gradient.addColorStop(0, this.color);
+    gradient.addColorStop(0.7, this.color.replace('rgb', 'rgba').replace(')', ', 0.8)'));
+    gradient.addColorStop(1, this.color.replace('rgb', 'rgba').replace(')', ', 0.2)'));
+    
+    ctx.fillStyle = gradient;
     ctx.shadowColor = this.color;
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 15 + Math.sin(this.life * 0.3) * 5;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    
+    // Effet de rotation pour certaines balles
+    if (this.life % 20 < 10) {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, pulseSize * 0.6, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.fill();
+    }
+    
+    ctx.restore();
   }
+  
   isOutOfBounds() {
     return this.x < 0 || this.x > 800 || this.y < 0 || this.y > 600;
   }
+  
   checkCollision(player) {
     // Cercle-rectangle collision
     const closestX = Math.max(player.x, Math.min(this.x, player.x + player.width));
@@ -157,13 +473,281 @@ class Bullet {
   }
 }
 
+const deadSound = new Audio("pixel-death-66829.mp3");
+deadSound.volume = 1; // Volume ajustable (0.0 à 1.0)
+
+class Particle {
+  constructor(x, y, color, maxLife) {
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 10;
+    this.vy = (Math.random() - 0.5) * 10;
+    this.color = color;
+    this.life = maxLife;
+    this.maxLife = maxLife;
+    this.size = Math.random() * 4 + 1;
+    this.gravity = 0.3;
+  }
+  
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += this.gravity;
+    this.life--;
+    this.vx *= 0.98; // Friction
+    this.vy *= 0.98;
+  }
+  
+  draw(ctx) {
+    if (this.life <= 0) return;
+    
+    ctx.save();
+    const alpha = this.life / this.maxLife;
+    const size = this.size * alpha;
+    
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 5;
+    
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, size, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+}
+
+class DamageText {
+  constructor(x, y, damage) {
+    this.x = x;
+    this.y = y;
+    this.damage = damage;
+    this.life = 60; // Durée de vie en frames (1 seconde à 60 FPS)
+    this.maxLife = 60;
+    this.vx = (Math.random() - 0.5) * 2; // Mouvement horizontal léger
+    this.vy = -3; // Mouvement vers le haut
+    this.color = '#ff4444'; // Rouge pour les dégâts
+    this.size = 20; // Taille du texte
+  }
+  
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.1; // Légère gravité pour un effet naturel
+    this.life--;
+    this.vx *= 0.98; // Friction
+  }
+  
+  draw(ctx) {
+    if (this.life <= 0) return;
+    
+    ctx.save();
+    
+    // Calcul de l'opacité et de la taille selon la vie restante
+    const alpha = this.life / this.maxLife;
+    const scale = 1 + (1 - alpha) * 0.5; // Grossit légèrement en disparaissant
+    
+    ctx.globalAlpha = alpha;
+    ctx.font = `bold ${this.size * scale}px Orbitron`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Effet de contour pour la lisibilité
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.lineWidth = 3;
+    ctx.strokeText('-' + this.damage, this.x, this.y);
+    
+    // Texte principal avec effet de lueur
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 10;
+    ctx.fillText('-' + this.damage, this.x, this.y);
+    
+    ctx.restore();
+  }
+  
+  isDead() {
+    return this.life <= 0;
+  }
+}
+
+class Shield {
+  constructor(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = '#ffff00'; // Jaune
+    this.active = false;
+    this.animationTime = 0;
+    this.durability = 100; // Durabilité du bouclier
+    this.maxDurability = 100;
+    this.maxActiveTime = 600; // 10 secondes à 60 FPS
+    this.activeTime = 0;
+    this.cooldownTime = 0;
+    this.maxCooldown = 600; // 10 secondes de cooldown
+    this.hitsTaken = 0;
+    this.maxHits = 5; // Disparaît après 5 tirs
+    this.canActivate = true;
+  }
+  
+  activate(playerX, playerY, playerWidth, playerHeight) {
+    if (!this.canActivate || this.cooldownTime > 0) return;
+    
+    this.active = true;
+    this.x = playerX - 5;
+    this.y = playerY - 5;
+    this.width = playerWidth + 10;
+    this.height = playerHeight + 10;
+    
+    // Ne remettre à zéro que si c'est une nouvelle activation complète
+    if (this.activeTime >= this.maxActiveTime) {
+      this.activeTime = 0;
+      this.hitsTaken = 0;
+    }
+  }
+  
+  deactivate() {
+    if (this.active) {
+      this.active = false;
+      // NE PAS remettre à zéro activeTime pour permettre la reprise
+      // NE PAS démarrer le cooldown si c'est juste un relâchement du bouton
+    }
+  }
+  
+  forceDeactivate() {
+    // Désactivation forcée (par tirs ou temps)
+    this.active = false;
+    this.cooldownTime = this.maxCooldown;
+    this.canActivate = false;
+    this.activeTime = 0; // Reset complet après désactivation forcée
+    this.hitsTaken = 0;
+  }
+  
+  reset() {
+    this.active = false;
+    this.activeTime = 0;
+    this.cooldownTime = 0;
+    this.hitsTaken = 0;
+    this.canActivate = true;
+    this.animationTime = 0;
+  }
+  
+  update() {
+    if (this.active) {
+      this.animationTime++;
+      this.activeTime++;
+      
+      // Désactiver après 10 secondes
+      if (this.activeTime >= this.maxActiveTime) {
+        this.forceDeactivate();
+      }
+    }
+    
+    // Gérer le cooldown
+    if (this.cooldownTime > 0) {
+      this.cooldownTime--;
+      if (this.cooldownTime <= 0) {
+        this.canActivate = true;
+      }
+    }
+  }
+  
+  takeDamage() {
+    if (!this.active) return false;
+    
+    this.hitsTaken++;
+    
+    // Désactiver après 5 tirs
+    if (this.hitsTaken >= this.maxHits) {
+      this.forceDeactivate();
+      return true; // Bouclier détruit
+    }
+    
+    return false; // Bouclier encore actif
+  }
+  
+  draw(ctx) {
+    if (!this.active) return;
+    
+    ctx.save();
+    
+    // Calcul de l'intensité selon le temps restant et les hits
+    const timeRatio = 1 - (this.activeTime / this.maxActiveTime);
+    const hitRatio = 1 - (this.hitsTaken / this.maxHits);
+    const intensity = Math.min(timeRatio, hitRatio);
+    
+    // Effet de pulsation plus rapide quand le bouclier se fragilise
+    const pulseSpeed = 0.2 + (1 - intensity) * 0.5;
+    const pulse = Math.sin(this.animationTime * pulseSpeed) * 0.1 + 0.9;
+    const alpha = (0.6 + intensity * 0.3) * pulse;
+    
+    // Couleur qui change selon l'état
+    let shieldColor = this.color;
+    if (intensity < 0.5) {
+      // Passe au rouge quand le bouclier se fragilise
+      const redIntensity = (0.5 - intensity) * 2;
+      shieldColor = `rgb(${255}, ${255 * (1 - redIntensity)}, 0)`;
+    }
+    
+    // Dessiner le bouclier avec effet de lueur
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = shieldColor;
+    ctx.shadowColor = shieldColor;
+    ctx.shadowBlur = 15 + (1 - intensity) * 10;
+    
+    // Forme du bouclier (rectangle arrondi)
+    ctx.beginPath();
+    ctx.roundRect(this.x, this.y, this.width, this.height, 8);
+    ctx.fill();
+    
+    // Effet de bordure brillante
+    ctx.globalAlpha = 0.8;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Effet d'énergie au centre
+    ctx.globalAlpha = 0.4 * intensity;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(this.x + 3, this.y + 3, this.width - 6, this.height - 6, 5);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+  
+  checkCollision(bullet) {
+    if (!this.active) return false;
+    
+    // Vérifier si la balle touche le bouclier
+    const bulletLeft = bullet.x - bullet.radius;
+    const bulletRight = bullet.x + bullet.radius;
+    const bulletTop = bullet.y - bullet.radius;
+    const bulletBottom = bullet.y + bullet.radius;
+    
+    const collision = !(bulletRight < this.x || 
+             bulletLeft > this.x + this.width || 
+             bulletBottom < this.y || 
+             bulletTop > this.y + this.height);
+    
+    if (collision) {
+      this.takeDamage();
+    }
+    
+    return collision;
+  }
+}
+
 class Player {
   constructor(x, y, color, gamepadIndex) {
     this.x = x; this.y = y;
-    this.width = 40; this.height = 40;
+    this.width = color === 'red' ? 60 : 40; // Personnage rouge plus grand
+    this.height = color === 'red' ? 70 : 40; // Hauteur augmentée pour les jambes plus longues
     this.color = color;
     this.gamepadIndex = gamepadIndex;
-    this.speed = 7;
+    this.speed = 4; // Réduit de 7 à 4 pour ralentir le joueur
     this.bullets = [];
     this.hasGun = true;
     this.cooldownMax = 20;
@@ -171,6 +755,58 @@ class Player {
     this.health = 10;
     this.alive = true;
     this.shootDirection = { x: 1, y: 0 };
+    this.animationTime = 0;
+    this.isMoving = false;
+    this.hitEffect = 0; // Effet visuel lors des dégâts
+    // Effet visuel lors du tir supprimé
+    this.particles = []; // Particules d'effet
+    
+    // Système d'animation pour le personnage rouge
+    this.isAnimated = (color === 'red'); // Seul le joueur rouge est animé
+    this.walkCycle = 0; // Cycle de marche pour l'animation
+    this.armSwing = 0; // Balancement des bras
+    this.legOffset = 0; // Décalage des jambes
+    
+    // Système de recul lors du tir
+    this.recoilOffset = 0; // Décalage de recul
+    this.recoilTime = 0; // Temps du recul
+    this.maxRecoilTime = 8; // Durée du recul en frames
+    
+    this.shield = new Shield(0, 0, 50, 50); // Bouclier du joueur
+    this.currentWeapon = 0; // 0 = arme normale, 1 = arme rapide
+    this.weapons = [
+      {
+        name: "Glock17",
+        damage: 1,
+        cooldown: 10,
+        bulletColor: this.color,
+        bulletSpeed: 40,
+        ammo: 10,
+        maxAmmo: 10,
+        isReloading: false,
+        reloadTime: 180, // 3 secondes
+        currentReloadTime: 0
+      },
+      {
+        name: "AK47",
+        damage: 2,
+        cooldown: 20,
+        bulletColor: 'white',
+        bulletSpeed: 30,
+        ammo: 10,
+        maxAmmo: 10,
+        isReloading: false,
+        reloadTime: 180, // 3 secondes
+        currentReloadTime: 0
+      }
+    ];
+    
+    // Système de rechargement (supprimé car maintenant dans chaque arme)
+    // this.ammo = 10; // Munitions par chargeur
+    // this.maxAmmo = 10; // Munitions maximum
+    // this.isReloading = false; // État de rechargement
+    // this.reloadTime = 180; // 3 secondes à 60 FPS
+    // this.currentReloadTime = 0; // Temps de rechargement actuel
   }
 
   reset(x, y) {
@@ -181,11 +817,35 @@ class Player {
     this.bullets = [];
     this.cooldown = 0;
     this.shootDirection = { x: 1, y: 0 };
+    this.animationTime = 0;
+    this.isMoving = false;
+    this.hitEffect = 0;
+    // Effet visuel lors du tir supprimé
+    this.particles = [];
+    
+    // Réinitialiser l'animation
+    this.walkCycle = 0;
+    this.armSwing = 0;
+    this.legOffset = 0;
+    this.recoilOffset = 0;
+    this.recoilTime = 0;
+    
+    this.shield.reset(); // Réinitialiser complètement le bouclier
+    this.currentWeapon = 0; // Réinitialiser à l'arme normale
+    
+    // Réinitialiser le système de rechargement pour chaque arme
+    this.weapons.forEach(weapon => {
+      weapon.ammo = weapon.maxAmmo;
+      weapon.isReloading = false;
+      weapon.currentReloadTime = 0;
+    });
   }
 
   moveWithCollision(dx, dy, walls) {
     let newX = this.x + dx;
     let newY = this.y + dy;
+    
+    this.isMoving = (dx !== 0 || dy !== 0);
 
     // collision horizontal
     let collisionX = walls.some(wall => wall.collidesWith(newX, this.y, this.width, this.height));
@@ -198,111 +858,566 @@ class Player {
     // limite du canvas
     this.x = Math.min(Math.max(this.x, 0), 800 - this.width);
     this.y = Math.min(Math.max(this.y, 0), 600 - this.height);
+    
+    // Le joueur rouge tire toujours vers la droite
+    if (this.isAnimated) {
+      this.shootDirection = { x: 1, y: 0 };
+    }
   }
 
   update(opponent, walls) {
-  if (!this.alive) return;
-
-  const gp = navigator.getGamepads()[this.gamepadIndex];
-  if (!gp) return;
-
-  // Déplacement 4 directions uniquement (sans diagonales)
-  let axisMoveX = gp.axes[0];
-  let axisMoveY = gp.axes[1];
-  let moveX = 0;
-  let moveY = 0;
-
-  if (Math.abs(axisMoveX) > Math.abs(axisMoveY)) {
-    if (axisMoveX > 0.5) moveX = this.speed;    // droite
-    else if (axisMoveX < -0.5) moveX = -this.speed;  // gauche
-  } else {
-    if (axisMoveY > 0.5) moveY = this.speed;    // bas
-    else if (axisMoveY < -0.5) moveY = -this.speed;  // haut
-  }
-
-  this.moveWithCollision(moveX, moveY, walls);
-
-  // Direction de tir basée sur joystick droit (axes 2 et 3), aussi sans diagonales
-  let axisShootX = gp.axes[2];
-  let axisShootY = gp.axes[3];
-  let shootDir = null;
-
-  if (this.color === 'red') {
-    this.shootDirection = { x: 1, y: 0 }; // vers la gauche
-  } else if (this.color === 'blue') {
-    this.shootDirection = { x: -1, y: 0 }; // vers la droite
-  }
-
-  // Tir bouton X (bouton 2)
-  if (this.hasGun && gp.buttons[2].pressed && this.cooldown <= 0 && this.shootDirection) {
-    this.shoot();
-    this.cooldown = 20;
-  }
-  if (this.cooldown > 0) this.cooldown--;
-
-  // Mise à jour des balles
-  this.bullets.forEach(b => b.update());
-  this.bullets = this.bullets.filter(b => {
-    if (walls.some(wall => wall.collidesWith(b.x - b.radius, b.y - b.radius, b.radius * 2, b.radius * 2))) return false;
-    if (b.checkCollision(opponent)) {
-      opponent.health--;
-      b.hit = true;
-      if (opponent.health <= 0 && opponent.alive) {
-        opponent.alive = false;
-        showEndScreen(this.color);
+    if (!this.alive) return;
+    
+    this.animationTime++;
+    
+    // Animation du personnage rouge
+    if (this.isAnimated) {
+      // Gestion du recul après tir
+      if (this.recoilTime > 0) {
+        this.recoilTime--;
+        // Effet de recul : recule puis revient progressivement
+        const recoilProgress = this.recoilTime / this.maxRecoilTime;
+        if (recoilProgress > 0.5) {
+          // Phase de recul (première moitié)
+          this.recoilOffset = -4 * (recoilProgress - 0.5) * 2; // Recule vers la gauche
+        } else {
+          // Phase de retour (deuxième moitié)
+          this.recoilOffset = -4 * recoilProgress * 2; // Revient en position
+        }
+      } else {
+        this.recoilOffset = 0; // Position normale
+      }
+      
+      if (this.isMoving) {
+        this.walkCycle += 0.3; // Vitesse de l'animation de marche
+        // Réduire l'animation des bras en position de visée
+        this.armSwing = Math.sin(this.walkCycle) * 2; // Mouvement réduit pour la visée
+        this.legOffset = Math.sin(this.walkCycle + Math.PI) * 4; // Décalage des jambes
+      } else {
+        // Animation idle très subtile en position de visée
+        this.armSwing = Math.sin(this.animationTime * 0.05) * 0.5;
+        this.legOffset = 0;
       }
     }
-    return !b.isOutOfBounds() && !b.hit;
-  });
-}
+    
+    // Diminuer les effets visuels
+    if (this.hitEffect > 0) this.hitEffect--;
+    // Effet de tir supprimé
+    
+    // Mettre à jour les particules
+    this.particles = this.particles.filter(particle => {
+      particle.update();
+      return particle.life > 0;
+    });
 
+    const gp = navigator.getGamepads()[this.gamepadIndex];
+    if (!gp) return;
 
+    // Gestion du rechargement pour l'arme actuelle
+    const currentWeapon = this.weapons[this.currentWeapon];
+    if (currentWeapon.isReloading) {
+      currentWeapon.currentReloadTime--;
+      if (currentWeapon.currentReloadTime <= 0) {
+        currentWeapon.isReloading = false;
+        currentWeapon.ammo = currentWeapon.maxAmmo; // Rechargement complet
+      }
+    }
+
+    // Déclenchement automatique du rechargement quand les munitions sont épuisées
+    if (currentWeapon.ammo <= 0 && !currentWeapon.isReloading) {
+      currentWeapon.isReloading = true;
+      currentWeapon.currentReloadTime = currentWeapon.reloadTime;
+    }
+
+    // Déplacement 4 directions uniquement (sans diagonales)
+    let axisMoveX = gp.axes[0];
+    let axisMoveY = gp.axes[1];
+    let moveX = 0;
+    let moveY = 0;
+
+    if (Math.abs(axisMoveX) > Math.abs(axisMoveY)) {
+      if (axisMoveX > 0.5) moveX = this.speed;    // droite
+      else if (axisMoveX < -0.5) moveX = -this.speed;  // gauche
+    } else {
+      if (axisMoveY > 0.5) moveY = this.speed;    // bas
+      else if (axisMoveY < -0.5) moveY = -this.speed;  // haut
+    }
+
+    this.moveWithCollision(moveX, moveY, walls);
+
+    // Direction de tir
+    if (this.color === 'red') {
+      this.shootDirection = { x: 1, y: 0 };
+    } else if (this.color === 'blue') {
+      this.shootDirection = { x: -1, y: 0 };
+    }
+
+    // Tir bouton X (bouton 2) - impossible si le bouclier est actif, en rechargement ou sans munitions
+    if (this.hasGun && gp.buttons[2].pressed && this.cooldown <= 0 && this.shootDirection && !this.shield.active && !currentWeapon.isReloading && currentWeapon.ammo > 0) {
+      this.shoot();
+      this.cooldown = this.weapons[this.currentWeapon].cooldown;
+      // Effet blanc lors du tir supprimé
+    }
+    if (this.cooldown > 0) this.cooldown--;
+
+    // Changement d'arme bouton A (bouton 0) - impossible si le bouclier est actif
+    if (gp.buttons[0].pressed && this.cooldown <= 0 && !this.shield.active) {
+      this.currentWeapon = (this.currentWeapon + 1) % this.weapons.length;
+      this.cooldown = 10; // Petit cooldown pour éviter les changements trop rapides
+    }
+
+    // Bouclier bouton Y (bouton 3)
+    if (gp.buttons[3].pressed) {
+      this.shield.activate(this.x, this.y, this.width, this.height);
+    } else {
+      this.shield.deactivate();
+    }
+    
+    // Mettre à jour le bouclier
+    this.shield.update();
+
+    // Mise à jour des balles
+    this.bullets.forEach(b => b.update());
+    this.bullets = this.bullets.filter(b => {
+      // Collision avec les murs - la balle disparaît immédiatement
+      if (walls.some(wall => wall.collidesWith(b.x - b.radius, b.y - b.radius, b.radius * 2, b.radius * 2))) {
+        this.createImpactParticles(b.x, b.y);
+        return false; // Balle supprimée
+      }
+      
+      // Vérifier collision avec le bouclier de l'adversaire - la balle disparaît
+      if (opponent.shield.checkCollision(b)) {
+        this.createImpactParticles(b.x, b.y);
+        return false; // Balle supprimée
+      }
+      
+      // Collision avec l'ennemi - la balle disparaît après avoir infligé des dégâts
+      if (b.checkCollision(opponent)) {
+        opponent.health -= b.damage; // Utiliser les dégâts de la balle
+        opponent.hitEffect = 15;
+        
+        // Créer un texte de dégâts au-dessus du joueur touché
+        const damageX = opponent.x + opponent.width / 2;
+        const damageY = opponent.y - 10; // Au-dessus du joueur
+        damageTexts.push(new DamageText(damageX, damageY, b.damage)); // Afficher les vrais dégâts
+        
+        this.createHitParticles(b.x, b.y);
+        
+        if (opponent.health <= 0 && opponent.alive) {
+          opponent.alive = false;
+          this.createDeathParticles(opponent.x + opponent.width/2, opponent.y + opponent.height/2);
+          showEndScreen(this.color);
+          deadSound.currentTime = 0;
+          deadSound.play().catch(e => {
+            console.log("Son bloqué jusqu'à interaction utilisateur :", e);
+          });
+        }
+        return false; // Balle supprimée après impact
+      }
+      
+      // Supprimer les balles qui sortent des limites du canvas
+      if (b.isOutOfBounds()) {
+        return false; // Balle supprimée
+      }
+      
+      return true; // Garder la balle
+    });
+  }
+
+  createImpactParticles(x, y) {
+    for (let i = 0; i < 8; i++) {
+      this.particles.push(new Particle(x, y, 'orange', 30));
+    }
+  }
+
+  createHitParticles(x, y) {
+    for (let i = 0; i < 12; i++) {
+      this.particles.push(new Particle(x, y, 'red', 40));
+    }
+  }
+
+  createDeathParticles(x, y) {
+    for (let i = 0; i < 20; i++) {
+      this.particles.push(new Particle(x, y, 'white', 60));
+    }
+  }
 
   shoot() {
+    const weapon = this.weapons[this.currentWeapon];
     const startX = this.x + this.width / 2 + this.shootDirection.x * this.width / 2;
     const startY = this.y + this.height / 2 + this.shootDirection.y * this.height / 2;
-    const bullet = new Bullet(startX, startY, this.color, this.shootDirection);
+    
+    // Créer une balle avec les propriétés de l'arme actuelle
+    const bullet = new Bullet(startX, startY, weapon.bulletColor, this.shootDirection);
+    bullet.speed = weapon.bulletSpeed;
+    bullet.damage = weapon.damage;
     this.bullets.push(bullet);
+
+    // Décrémenter les munitions de l'arme actuelle
+    weapon.ammo--;
+
+    // Déclencher le recul pour le personnage animé
+    if (this.isAnimated) {
+      this.recoilTime = this.maxRecoilTime;
+      // Recul plus fort pour l'AK47
+      if (weapon.name === "AK47") {
+        this.maxRecoilTime = 12; // Recul plus long
+      } else {
+        this.maxRecoilTime = 8; // Recul normal pour Glock
+      }
+      this.recoilTime = this.maxRecoilTime;
+    }
+
+    // Créer des particules de tir (couleur selon l'arme)
+    const particleColor = weapon.bulletColor === 'white' ? 'white' : 'yellow';
+    for (let i = 0; i < 6; i++) {
+      this.particles.push(new Particle(startX, startY, particleColor, 25));
+    }
+
+    // Joue le son
+    shootSound.currentTime = 0;
+    shootSound.play().catch(e => {
+      console.log("Son bloqué jusqu'à interaction utilisateur :", e);
+    });
   }
 
   draw(ctx) {
     if (!this.alive) return;
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-
-    // Indicateur direction de tir (flèche)
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    const centerX = this.x + this.width / 2;
-    const centerY = this.y + this.height / 2;
-    const dir = this.shootDirection;
-    const arrowSize = 10;
-    ctx.moveTo(centerX + dir.x * arrowSize, centerY + dir.y * arrowSize);
-    if (dir.x !== 0) {
-      ctx.lineTo(centerX + dir.x * (arrowSize - 5), centerY - 5);
-      ctx.lineTo(centerX + dir.x * (arrowSize - 5), centerY + 5);
+    
+    ctx.save();
+    
+    // Transparence pendant le rechargement
+    const currentWeapon = this.weapons[this.currentWeapon];
+    if (currentWeapon.isReloading) {
+      ctx.globalAlpha = 0.6; // Rendre le joueur transparent pendant le rechargement
+    }
+    
+    // Effet de secousse lors des dégâts
+    if (this.hitEffect > 0) {
+      ctx.translate(
+        (Math.random() - 0.5) * this.hitEffect * 0.5,
+        (Math.random() - 0.5) * this.hitEffect * 0.5
+      );
+    }
+    
+    // Animation de mouvement (légère oscillation)
+    const offsetY = this.isMoving ? Math.sin(this.animationTime * 0.3) * 2 : 0;
+    
+    // Effet de lueur selon la couleur
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 10 + Math.sin(this.animationTime * 0.2) * 5;
+    
+    // Couleur du joueur avec effet de dégâts
+    let playerColor = this.color;
+    if (this.hitEffect > 0) {
+      const flashIntensity = this.hitEffect / 15;
+      playerColor = this.color === 'red' ? 
+        `rgba(255, ${100 * (1 - flashIntensity)}, ${100 * (1 - flashIntensity)}, 1)` :
+        `rgba(${100 * (1 - flashIntensity)}, ${100 * (1 - flashIntensity)}, 255, 1)`;
+    }
+    
+    // Dessiner le joueur
+    if (this.isAnimated) {
+      // Dessiner le personnage animé pour le joueur rouge
+      this.drawAnimatedCharacter(ctx, playerColor, offsetY);
     } else {
-      ctx.lineTo(centerX - 5, centerY + dir.y * (arrowSize - 5));
-      ctx.lineTo(centerX + 5, centerY + dir.y * (arrowSize - 5));
+      // Dessiner le joueur normal (carré coloré) pour le joueur bleu
+      this.drawFallbackPlayer(ctx, playerColor, offsetY);
     }
-    ctx.closePath();
-    ctx.fill();
-
-    // Vie affichée
-    ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.fillText(`❤️: ${this.health}`, this.x, this.y - 10);
-
-    // Barre de cooldown
-    ctx.fillStyle = '#333';
-    ctx.fillRect(this.x, this.y + this.height + 2, this.width, 6);
-    if(this.cooldown > 0){
-      const fillWidth = this.width * (1 - this.cooldown / this.cooldownMax);
-      ctx.fillStyle = '#0f0';
-      ctx.fillRect(this.x, this.y + this.height + 2, fillWidth, 6);
+    
+    // Animation de rechargement - barre de progression circulaire
+    if (currentWeapon.isReloading) {
+      const centerX = this.x + this.width / 2;
+      const centerY = this.y + this.height / 2 + offsetY;
+      const radius = this.width / 2 + 15;
+      
+      // Calcul du pourcentage de rechargement
+      const reloadProgress = 1 - (currentWeapon.currentReloadTime / currentWeapon.reloadTime);
+      const angle = (reloadProgress * 2 * Math.PI) - Math.PI / 2; // Commence en haut
+      
+      // Cercle de fond
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      
+      // Barre de progression circulaire
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, angle);
+      ctx.strokeStyle = '#00ff00';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = '#00ff00';
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      
+      // Icône de rechargement au centre avec rotation
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(this.animationTime * 0.2); // Rotation continue
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 5;
+      ctx.fillText('⟲', 0, 0);
+      ctx.restore();
+      
+      // Texte de pourcentage
+      ctx.font = 'bold 12px Orbitron';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 3;
+      ctx.fillText(`${Math.round(reloadProgress * 100)}%`, centerX, centerY + 25);
     }
+    
+    // Effet de tir (flash) supprimé pour une meilleure visibilité
 
+    // Barre de cooldown et affichage des munitions supprimés pour une interface plus propre
+    
+    ctx.restore();
+    
+    // Dessiner le bouclier
+    this.shield.draw(ctx);
+    
+    // Dessiner les particules
+    this.particles.forEach(particle => particle.draw(ctx));
+    
+    // Dessiner les balles
     this.bullets.forEach(b => b.draw(ctx));
+  }
+
+  // Méthode pour dessiner le personnage animé (mini-personnage avec tête, corps, bras, jambes)
+  drawAnimatedCharacter(ctx, playerColor, offsetY) {
+    const centerX = this.x + this.width / 2 + this.recoilOffset; // Appliquer le décalage de recul
+    const centerY = this.y + this.height / 2 + offsetY;
+    
+    ctx.save();
+    
+    // Couleurs du personnage
+    const headColor = '#ffdbac'; // Couleur chair
+    const bodyColor = this.color;
+    const limbColor = '#ffdbac'; // Couleur chair pour les membres
+    const clothingColor = this.color === 'red' ? '#8B0000' : '#000080'; // Vêtements plus foncés
+    
+    // Arme actuelle pour adapter les positions
+    const currentWeapon = this.weapons[this.currentWeapon];
+    
+    // Effet de dégâts
+    if (this.hitEffect > 0) {
+      ctx.filter = 'hue-rotate(180deg) saturate(2)';
+    }
+    
+    // === JAMBES ===
+    const legWidth = 8; // Agrandi de 6 à 8
+    const legHeight = 25; // Agrandi de 18 à 25
+    const legY = centerY + 15; // Ajusté pour la nouvelle taille plus grande
+    
+    // Jambe gauche
+    ctx.fillStyle = limbColor;
+    ctx.fillRect(
+      centerX - 12 + this.legOffset, // Espacées davantage pour les jambes plus larges
+      legY, 
+      legWidth, 
+      legHeight
+    );
+    
+    // Jambe droite
+    ctx.fillRect(
+      centerX + 4 - this.legOffset, // Espacées davantage pour les jambes plus larges
+      legY, 
+      legWidth, 
+      legHeight
+    );
+    
+    // === PIEDS ===
+    ctx.fillStyle = '#654321'; // Marron pour les chaussures
+    // Pied gauche
+    ctx.fillRect(
+      centerX - 12 + this.legOffset - 2, 
+      legY + legHeight, 
+      legWidth + 4, 
+      4
+    );
+    
+    // Pied droit
+    ctx.fillRect(
+      centerX + 4 - this.legOffset - 2, 
+      legY + legHeight, 
+      legWidth + 4, 
+      4
+    );
+    
+    // === CORPS ===
+    const bodyWidth = 24; // Agrandi de 16 à 24
+    const bodyHeight = 27; // Agrandi de 18 à 27
+    const bodyY = centerY - 6; // Ajusté pour la nouvelle taille
+    
+    ctx.fillStyle = clothingColor;
+    ctx.fillRect(
+      centerX - bodyWidth/2, 
+      bodyY, 
+      bodyWidth, 
+      bodyHeight
+    );
+    
+    // Détail du corps (boutons ou motif)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillRect(centerX - 1.5, bodyY + 6, 3, 3); // Boutons agrandis
+    ctx.fillRect(centerX - 1.5, bodyY + 12, 3, 3);
+    ctx.fillRect(centerX - 1.5, bodyY + 18, 3, 3);
+    
+    // === BRAS EN POSITION DE VISÉE ===
+    const armWidth = 6; // Agrandi de 4 à 6
+    const armLength = 21; // Agrandi de 14 à 21
+    const armY = bodyY + 3; // Ajusté pour la nouvelle taille
+    
+    // Bras gauche (supporte l'arme en avant)
+    ctx.fillStyle = limbColor;
+    const leftArmX = centerX - bodyWidth/2 - armWidth + 6; // Ajusté pour la nouvelle taille
+    const leftArmY = armY - 3; // Ajusté pour la nouvelle taille
+    
+    if (currentWeapon.name === "AK47") {
+      // Pour l'AK47, bras gauche étendu vers l'avant pour supporter l'arme
+      ctx.fillRect(leftArmX + 9, leftArmY, armWidth, armLength - 3); // Dimensions ajustées
+      ctx.fillRect(leftArmX + 15, leftArmY + 6, armWidth + 3, 9); // Avant-bras étendu agrandi
+    } else {
+      // Pour le Glock, bras gauche en position de support
+      ctx.fillRect(leftArmX + 4, leftArmY + 3, armWidth, armLength - 6); // Dimensions ajustées
+    }
+    
+    // Bras droit (tient l'arme, étendu vers la droite)
+    const rightArmX = centerX + bodyWidth/2 - 3; // Ajusté pour la nouvelle taille
+    const rightArmY = armY - 1.5; // Position de visée ajustée
+    
+    ctx.fillRect(rightArmX, rightArmY, armWidth + 3, armLength - 3); // Dimensions ajustées
+    ctx.fillRect(rightArmX + 6, rightArmY + 3, 9, armWidth); // Avant-bras étendu agrandi
+    
+    // === MAINS EN POSITION DE VISÉE ===
+    // Main gauche (supporte l'arme)
+    ctx.fillStyle = limbColor;
+    if (currentWeapon.name === "AK47") {
+      // Main gauche sous le garde-main de l'AK47
+      ctx.fillRect(leftArmX + 18, leftArmY + 12, 4.5, 4.5); // Main agrandie
+    } else {
+      // Main gauche pour supporter le pistolet
+      ctx.fillRect(leftArmX + 7.5, leftArmY + 12, 4.5, 4.5); // Main agrandie
+    }
+    
+    // Main droite (tient la crosse/poignée)
+    ctx.fillRect(rightArmX + 3, rightArmY + armLength - 6, 4.5, 6); // Main agrandie
+    
+    // === TÊTE ===
+    const headSize = 18; // Agrandi de 12 à 18
+    const headY = centerY - 24; // Ajusté pour la nouvelle taille
+    
+    ctx.fillStyle = headColor;
+    ctx.fillRect(
+      centerX - headSize/2, 
+      headY, 
+      headSize, 
+      headSize
+    );
+    
+    // === VISAGE ===
+    // Yeux
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(centerX - 4.5, headY + 4.5, 3, 3); // Yeux agrandis
+    ctx.fillRect(centerX + 1.5, headY + 4.5, 3, 3); // Yeux agrandis
+    
+    // Bouche
+    ctx.fillRect(centerX - 3, headY + 10.5, 6, 1.5); // Bouche agrandie
+    
+    // === CHEVEUX ===
+    ctx.fillStyle = '#654321'; // Marron
+    ctx.fillRect(centerX - headSize/2, headY - 3, headSize, 4.5); // Cheveux agrandis
+    
+    // === ARME PERMANENTE (selon l'arme équipée) ===
+    const weaponBaseX = rightArmX + 9; // Position alignée avec l'avant-bras droit agrandi
+    const weaponBaseY = rightArmY + 4.5; // Légèrement sous l'avant-bras ajusté
+    
+    if (currentWeapon.name === "Glock17") {
+      // === GLOCK17 (Petit pistolet agrandi) ===
+      // Crosse du pistolet
+      ctx.fillStyle = '#333333'; // Gris foncé
+      ctx.fillRect(weaponBaseX, weaponBaseY, 4.5, 9); // Agrandi proportionnellement
+      
+      // Corps principal du pistolet
+      ctx.fillStyle = '#666666'; // Gris métallique
+      ctx.fillRect(weaponBaseX + 4.5, weaponBaseY + 1.5, 9, 6); // Agrandi
+      
+      // Canon du pistolet
+      ctx.fillStyle = '#222222'; // Très foncé
+      ctx.fillRect(weaponBaseX + 13.5, weaponBaseY + 3, 6, 3); // Agrandi
+      
+      // Détail de la crosse
+      ctx.fillStyle = '#444444';
+      ctx.fillRect(weaponBaseX + 1.5, weaponBaseY + 3, 1.5, 3); // Agrandi
+      
+    } else if (currentWeapon.name === "AK47") {
+      // === AK47 (Grosse arme agrandie) ===
+      // Crosse
+      ctx.fillStyle = '#8B4513'; // Marron foncé pour le bois
+      ctx.fillRect(weaponBaseX - 4.5, weaponBaseY, 7.5, 10.5); // Agrandi
+      
+      // Corps principal (receiver)
+      ctx.fillStyle = '#555555'; // Gris métallique foncé
+      ctx.fillRect(weaponBaseX + 3, weaponBaseY + 1.5, 12, 7.5); // Agrandi
+      
+      // Garde-main
+      ctx.fillStyle = '#8B4513'; // Marron comme la crosse
+      ctx.fillRect(weaponBaseX + 15, weaponBaseY, 9, 10.5); // Agrandi
+      
+      // Canon long
+      ctx.fillStyle = '#333333'; // Gris très foncé
+      ctx.fillRect(weaponBaseX + 24, weaponBaseY + 3, 12, 4.5); // Agrandi
+      
+      // Chargeur
+      ctx.fillStyle = '#444444';
+      ctx.fillRect(weaponBaseX + 9, weaponBaseY + 9, 4.5, 6); // Agrandi
+      
+      // Détails du corps
+      ctx.fillStyle = '#666666';
+      ctx.fillRect(weaponBaseX + 4.5, weaponBaseY + 3, 9, 1.5); // Agrandi
+      
+      // Bout du canon
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(weaponBaseX + 36, weaponBaseY + 3.75, 1.5, 3); // Agrandi
+    }
+    
+    // === FLASH DE TIR (si en train de tirer) ===
+    if (this.cooldown > this.cooldownMax - 5) {
+      const flashX = currentWeapon.name === "Glock17" ? weaponBaseX + 19.5 : weaponBaseX + 37.5; // Positions ajustées
+      const flashY = weaponBaseY + 2.25; // Position ajustée
+      
+      // Flash de tir adapté à l'arme agrandie
+      ctx.fillStyle = '#FFFF00'; // Jaune vif
+      const flashSize = currentWeapon.name === "Glock17" ? 3 : 4.5; // Tailles agrandies
+      ctx.fillRect(flashX, flashY, flashSize + 1.5, flashSize);
+      
+      ctx.fillStyle = '#FFA500'; // Orange
+      ctx.fillRect(flashX + 1.5, flashY + 0.75, flashSize, flashSize - 1.5);
+      
+      ctx.fillStyle = '#FF0000'; // Rouge au centre
+      ctx.fillRect(flashX + 2.25, flashY + 1.5, flashSize - 1.5, flashSize - 3);
+    }
+    
+    ctx.filter = 'none'; // Réinitialiser le filtre
+    ctx.restore();
+  }
+
+  // Méthode pour dessiner le joueur de base (fallback)
+  drawFallbackPlayer(ctx, playerColor, offsetY) {
+    const gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+    gradient.addColorStop(0, playerColor);
+    gradient.addColorStop(1, this.color === 'red' ? 'darkred' : 'darkblue');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(this.x, this.y + offsetY, this.width, this.height);
   }
 }
 
@@ -314,6 +1429,159 @@ let player1 = new Player(100, 300, 'red', 0);
 let player2 = new Player(700, 300, 'blue', 1);
 let gameRunning = false;
 let gamePaused = false;
+let backgroundParticles = [];
+let gameTime = 0;
+let damageTexts = []; // Tableau pour stocker les textes de dégâts
+
+// Initialiser les particules d'arrière-plan
+function initBackgroundParticles() {
+  backgroundParticles = [];
+  for (let i = 0; i < 50; i++) {
+    backgroundParticles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.5 + 0.2,
+      color: Math.random() > 0.5 ? 'rgba(109, 213, 237, ' : 'rgba(255, 255, 255, '
+    });
+  }
+}
+
+// Mettre à jour les particules d'arrière-plan
+function updateBackgroundParticles() {
+  backgroundParticles.forEach(particle => {
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+    
+    // Rebond sur les bords
+    if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+    if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+    
+    // Variation d'opacité
+    particle.opacity = 0.2 + Math.sin(gameTime * 0.01 + particle.x * 0.01) * 0.3;
+  });
+}
+
+// Dessiner les particules d'arrière-plan
+function drawBackgroundParticles() {
+  backgroundParticles.forEach(particle => {
+    ctx.save();
+    ctx.globalAlpha = particle.opacity;
+    ctx.fillStyle = particle.color + particle.opacity + ')';
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.size, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+// Dessiner les vies en haut de l'écran
+function drawHealthBars() {
+  ctx.save();
+  ctx.shadowBlur = 0;
+  ctx.font = "bold 24px Orbitron";
+  
+  // Vie du joueur rouge (en haut à gauche)
+  ctx.fillStyle = "red";
+  ctx.shadowColor = "red";
+  ctx.shadowBlur = 10;
+  ctx.textAlign = "left";
+  const player1Health = `❤️ ${player1.health}`;
+  ctx.fillText(player1Health, 20, 35);
+  
+  // Arme du joueur rouge (sous la vie)
+  ctx.font = "bold 16px Orbitron";
+  ctx.fillStyle = "white";
+  ctx.shadowColor = "white";
+  ctx.shadowBlur = 5;
+  const player1Weapon = `🔫 ${player1.weapons[player1.currentWeapon].name}`;
+  ctx.fillText(player1Weapon, 20, 55);
+  
+  // Munitions du joueur rouge
+  ctx.font = "bold 14px Orbitron";
+  const currentWeapon1 = player1.weapons[player1.currentWeapon];
+  if (currentWeapon1.isReloading) {
+    ctx.fillStyle = "orange";
+    ctx.shadowColor = "orange";
+    ctx.fillText(`🔄 Rechargement...`, 20, 95);
+  } else {
+    ctx.fillStyle = "cyan";
+    ctx.shadowColor = "cyan";
+    ctx.fillText(`💥 ${currentWeapon1.ammo}/${currentWeapon1.maxAmmo}`, 20, 95);
+  }
+  
+  // Statut du bouclier du joueur rouge
+  ctx.font = "bold 14px Orbitron";
+  if (player1.shield.active) {
+    ctx.fillStyle = "yellow";
+    ctx.shadowColor = "yellow";
+    const timeLeft = Math.ceil((player1.shield.maxActiveTime - player1.shield.activeTime) / 60);
+    const hitsLeft = player1.shield.maxHits - player1.shield.hitsTaken;
+    ctx.fillText(`🛡️ ${timeLeft}s | ${hitsLeft} hits`, 20, 115);
+  } else if (player1.shield.cooldownTime > 0) {
+    ctx.fillStyle = "gray";
+    ctx.shadowColor = "gray";
+    const cooldownLeft = Math.ceil(player1.shield.cooldownTime / 60);
+    ctx.fillText(`🛡️ Cooldown: ${cooldownLeft}s`, 20, 115);
+  } else {
+    ctx.fillStyle = "green";
+    ctx.shadowColor = "green";
+    ctx.fillText(`🛡️ Prêt`, 20, 115);
+  }
+  
+  // Vie du joueur bleu (en haut à droite)
+  ctx.font = "bold 24px Orbitron";
+  ctx.fillStyle = "blue";
+  ctx.shadowColor = "blue";
+  ctx.shadowBlur = 10;
+  ctx.textAlign = "right";
+  const player2Health = `❤️ ${player2.health}`;
+  ctx.fillText(player2Health, canvas.width - 20, 35);
+  
+  // Arme du joueur bleu (sous la vie)
+  ctx.font = "bold 16px Orbitron";
+  ctx.fillStyle = "white";
+  ctx.shadowColor = "white";
+  ctx.shadowBlur = 5;
+  const player2Weapon = `🔫 ${player2.weapons[player2.currentWeapon].name}`;
+  ctx.fillText(player2Weapon, canvas.width - 20, 55);
+  
+  // Munitions du joueur bleu
+  ctx.font = "bold 14px Orbitron";
+  const currentWeapon2 = player2.weapons[player2.currentWeapon];
+  if (currentWeapon2.isReloading) {
+    ctx.fillStyle = "orange";
+    ctx.shadowColor = "orange";
+    ctx.fillText(`🔄 Rechargement...`, canvas.width - 20, 95);
+  } else {
+    ctx.fillStyle = "cyan";
+    ctx.shadowColor = "cyan";
+    ctx.fillText(`💥 ${currentWeapon2.ammo}/${currentWeapon2.maxAmmo}`, canvas.width - 20, 95);
+  }
+  
+  // Statut du bouclier du joueur bleu
+  ctx.font = "bold 14px Orbitron";
+  if (player2.shield.active) {
+    ctx.fillStyle = "yellow";
+    ctx.shadowColor = "yellow";
+    const timeLeft = Math.ceil((player2.shield.maxActiveTime - player2.shield.activeTime) / 60);
+    const hitsLeft = player2.shield.maxHits - player2.shield.hitsTaken;
+    ctx.fillText(`🛡️ ${timeLeft}s | ${hitsLeft} hits`, canvas.width - 20, 115);
+  } else if (player2.shield.cooldownTime > 0) {
+    ctx.fillStyle = "gray";
+    ctx.shadowColor = "gray";
+    const cooldownLeft = Math.ceil(player2.shield.cooldownTime / 60);
+    ctx.fillText(`🛡️ Cooldown: ${cooldownLeft}s`, canvas.width - 20, 115);
+  } else {
+    ctx.fillStyle = "green";
+    ctx.shadowColor = "green";
+    ctx.fillText(`🛡️ Prêt`, canvas.width - 20, 115);
+  }
+  
+  ctx.restore();
+}
 
 const walls = [
   // le mur de font le contour du canvas
@@ -334,35 +1602,114 @@ function getConnectedGamepads() {
 
 function gameLoop() {
   if (!gameRunning || gamePaused) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  
+  gameTime++;
+  
+  // Vérifier si le bouton Start (bouton 9) est pressé sur l'une des manettes
+  const gamepads = navigator.getGamepads();
+  for (let i = 0; i < gamepads.length; i++) {
+    const gp = gamepads[i];
+    if (gp && gp.buttons[9] && gp.buttons[9].pressed) {
+      // Éviter les pressions multiples avec un petit délai
+      if (!gp.startPressed) {
+        gp.startPressed = true;
+        togglePause();
+        setTimeout(() => {
+          if (gp) gp.startPressed = false;
+        }, 300);
+      }
+      break;
+    }
+  }
+  
+  // Effacer le canvas avec un effet de fondu
+  ctx.fillStyle = 'rgba(16, 26, 62, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Dessiner les particules d'arrière-plan
+  drawBackgroundParticles();
+  updateBackgroundParticles();
+  
+  // Dessiner les murs
   walls.forEach(wall => wall.draw(ctx));
-
+  
+  // Mettre à jour et dessiner les joueurs
   player1.update(player2, walls);
   player2.update(player1, walls);
-
+  
   player1.draw(ctx);
   player2.draw(ctx);
-
+  
+  // Mettre à jour et dessiner les textes de dégâts
+  damageTexts.forEach(damageText => damageText.update());
+  damageTexts = damageTexts.filter(damageText => !damageText.isDead());
+  damageTexts.forEach(damageText => damageText.draw(ctx));
+  
+  // Dessiner les barres de vie en haut de l'écran
+  drawHealthBars();
+  
+  // Effet de vignette
+  const gradient = ctx.createRadialGradient(
+    canvas.width / 2, canvas.height / 2, 0,
+    canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2
+  );
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
   requestAnimationFrame(gameLoop);
 }
 
 function showEndScreen(winnerColor) {
-  document.getElementById("endScreen").style.display = "flex";
-  document.getElementById("endMessage").innerText = `🏆 Le joueur ${winnerColor.toUpperCase()} a gagné !`;
+  const endScreen = document.getElementById("endScreen");
+  const endMessage = document.getElementById("endMessage");
+  
+  endScreen.style.display = "flex";
+  endMessage.innerHTML = `🏆 Le joueur <span style="color: ${winnerColor}; text-shadow: 0 0 10px ${winnerColor};">${winnerColor.toUpperCase()}</span> a gagné !`;
+  
+  // Animation d'apparition
+  endScreen.style.opacity = "0";
+  endScreen.style.transform = "scale(0.8)";
+  
+  setTimeout(() => {
+    endScreen.style.transition = "all 0.5s ease";
+    endScreen.style.opacity = "1";
+    endScreen.style.transform = "scale(1)";
+  }, 100);
+  
   gameRunning = false;
 }
 
 function startGame() {
   player1.reset(100, 300);
   player2.reset(700, 300);
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("endScreen").style.display = "none";
-  document.getElementById("pauseScreen").style.display = "none";
+  
+  // Animations de sortie des écrans
+  const screens = ["startScreen", "endScreen", "pauseScreen"];
+  screens.forEach(screenId => {
+    const screen = document.getElementById(screenId);
+    screen.style.transition = "all 0.3s ease";
+    screen.style.opacity = "0";
+    screen.style.transform = "translateY(-30px)";
+    
+    setTimeout(() => {
+      screen.style.display = "none";
+    }, 300);
+  });
+  
   gameRunning = true;
   gamePaused = false;
-  requestAnimationFrame(gameLoop);
+  gameTime = 0;
+  damageTexts = []; // Réinitialiser les textes de dégâts
+  
+  // Initialiser les particules d'arrière-plan
+  initBackgroundParticles();
+  
+  setTimeout(() => {
+    requestAnimationFrame(gameLoop);
+  }, 300);
 }
 
 function restartGame() {
@@ -371,10 +1718,32 @@ function restartGame() {
 
 function togglePause() {
   if (!gameRunning) return;
+  
   gamePaused = !gamePaused;
-  document.getElementById("pauseScreen").style.display = gamePaused ? "flex" : "none";
-  if (!gamePaused) {
-    requestAnimationFrame(gameLoop);
+  const pauseScreen = document.getElementById("pauseScreen");
+  
+  if (gamePaused) {
+    pauseScreen.style.display = "flex";
+    pauseScreen.style.opacity = "0";
+    pauseScreen.style.transform = "scale(0.9)";
+    
+    setTimeout(() => {
+      pauseScreen.style.transition = "all 0.3s ease";
+      pauseScreen.style.opacity = "1";
+      pauseScreen.style.transform = "scale(1)";
+    }, 50);
+  } else {
+    pauseScreen.style.transition = "all 0.3s ease";
+    pauseScreen.style.opacity = "0";
+    pauseScreen.style.transform = "scale(0.9)";
+    
+    setTimeout(() => {
+      pauseScreen.style.display = "none";
+    }, 300);
+    
+    setTimeout(() => {
+      requestAnimationFrame(gameLoop);
+    }, 300);
   }
 }
 
@@ -391,6 +1760,47 @@ window.addEventListener("gamepadconnected", (e) => {
 
 window.addEventListener("gamepaddisconnected", (e) => {
   console.log("Manette déconnectée de l'index", e.gamepad.index);
+});
+
+// Initialiser les particules d'arrière-plan au chargement
+window.addEventListener('load', () => {
+  initBackgroundParticles();
+  
+  // Ajouter des classes d'animation aux éléments
+  document.querySelectorAll('button').forEach(button => {
+    button.classList.add('fade-in');
+  });
+  
+  // Effet de typing pour le titre
+  const title = document.querySelector('#startScreen h1');
+  if (title) {
+    const originalText = title.textContent;
+    title.textContent = '';
+    let i = 0;
+    
+    function typeWriter() {
+      if (i < originalText.length) {
+        title.textContent += originalText.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+      }
+    }
+    
+    setTimeout(typeWriter, 500);
+  }
+});
+
+// Ajouter des effets de survol aux boutons
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('mouseenter', () => {
+      button.style.transform = 'translateY(-3px) scale(1.05)';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+      button.style.transform = 'translateY(0) scale(1)';
+    });
+  });
 });
 </script>
 
