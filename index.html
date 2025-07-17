@@ -518,6 +518,69 @@ class Particle {
   }
 }
 
+class BloodParticle {
+  constructor(x, y, direction) {
+    this.x = x;
+    this.y = y;
+    // Direction opposée à l'impact pour un effet réaliste
+    this.vx = (Math.random() - 0.5) * 15 + direction.x * -8;
+    this.vy = (Math.random() - 0.5) * 15 + direction.y * -8;
+    this.life = 40 + Math.random() * 20; // Durée de vie variable
+    this.maxLife = this.life;
+    this.size = Math.random() * 3 + 2; // Taille des gouttes de sang
+    this.gravity = 0.4;
+    this.color = this.getBloodColor();
+  }
+  
+  getBloodColor() {
+    // Différentes nuances de rouge pour le sang
+    const colors = [
+      '#8B0000', // Rouge foncé
+      '#DC143C', // Rouge cramoisi
+      '#B22222', // Rouge brique
+      '#FF0000', // Rouge pur
+      '#CC0000'  // Rouge moyen
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+  
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += this.gravity;
+    this.life--;
+    this.vx *= 0.95; // Friction pour ralentir
+    this.vy *= 0.98;
+  }
+  
+  draw(ctx) {
+    if (this.life <= 0) return;
+    
+    ctx.save();
+    const alpha = Math.max(0.3, this.life / this.maxLife); // Alpha minimum pour visibilité
+    const size = this.size * (this.life / this.maxLife);
+    
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 3;
+    
+    // Dessiner la goutte de sang (forme elliptique)
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y, size, size * 1.5, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Effet de brillance
+    ctx.globalAlpha = alpha * 0.5;
+    ctx.fillStyle = '#FF6666';
+    ctx.beginPath();
+    ctx.ellipse(this.x - size * 0.3, this.y - size * 0.3, size * 0.4, size * 0.6, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+}
+
 class DamageText {
   constructor(x, y, damage) {
     this.x = x;
@@ -760,6 +823,7 @@ class Player {
     this.hitEffect = 0; // Effet visuel lors des dégâts
     // Effet visuel lors du tir supprimé
     this.particles = []; // Particules d'effet
+    this.bloodParticles = []; // Particules de sang
     
     // Système d'animation pour le personnage rouge
     this.isAnimated = (color === 'red'); // Seul le joueur rouge est animé
@@ -822,6 +886,7 @@ class Player {
     this.hitEffect = 0;
     // Effet visuel lors du tir supprimé
     this.particles = [];
+    this.bloodParticles = []; // Réinitialiser les particules de sang
     
     // Réinitialiser l'animation
     this.walkCycle = 0;
@@ -906,6 +971,12 @@ class Player {
     
     // Mettre à jour les particules
     this.particles = this.particles.filter(particle => {
+      particle.update();
+      return particle.life > 0;
+    });
+
+    // Mettre à jour les particules de sang
+    this.bloodParticles = this.bloodParticles.filter(particle => {
       particle.update();
       return particle.life > 0;
     });
@@ -1001,6 +1072,12 @@ class Player {
         const damageY = opponent.y - 10; // Au-dessus du joueur
         damageTexts.push(new DamageText(damageX, damageY, b.damage)); // Afficher les vrais dégâts
         
+        // Créer l'effet de sang qui jaillit
+        const bloodX = opponent.x + opponent.width / 2;
+        const bloodY = opponent.y + opponent.height / 2;
+        const bulletDirection = { x: b.dx, y: b.dy }; // Direction de la balle
+        opponent.createBloodParticles(bloodX, bloodY, bulletDirection);
+        
         this.createHitParticles(b.x, b.y);
         
         if (opponent.health <= 0 && opponent.alive) {
@@ -1039,6 +1116,13 @@ class Player {
   createDeathParticles(x, y) {
     for (let i = 0; i < 20; i++) {
       this.particles.push(new Particle(x, y, 'white', 60));
+    }
+  }
+
+  createBloodParticles(x, y, bulletDirection) {
+    // Créer des particules de sang qui jaillissent
+    for (let i = 0; i < 12; i++) {
+      this.bloodParticles.push(new BloodParticle(x, y, bulletDirection));
     }
   }
 
@@ -1187,6 +1271,9 @@ class Player {
     // Dessiner les particules
     this.particles.forEach(particle => particle.draw(ctx));
     
+    // Dessiner les particules de sang
+    this.bloodParticles.forEach(particle => particle.draw(ctx));
+    
     // Dessiner les balles
     this.bullets.forEach(b => b.draw(ctx));
   }
@@ -1212,198 +1299,91 @@ class Player {
       ctx.filter = 'hue-rotate(180deg) saturate(2)';
     }
     
-    // === JAMBES ===
-    const legWidth = 8; // Agrandi de 6 à 8
-    const legHeight = 25; // Agrandi de 18 à 25
-    const legY = centerY + 15; // Ajusté pour la nouvelle taille plus grande
+    // === PERSONNAGE SIMPLIFIÉ : TÊTE ET ARME SEULEMENT ===
     
-    // Jambe gauche
-    ctx.fillStyle = limbColor;
-    ctx.fillRect(
-      centerX - 12 + this.legOffset, // Espacées davantage pour les jambes plus larges
-      legY, 
-      legWidth, 
-      legHeight
-    );
+    // === TÊTE (vue de haut) ===
+    const headSize = 20; // Taille de la tête
+    const headY = centerY - 10; // Position Y centrée
     
-    // Jambe droite
-    ctx.fillRect(
-      centerX + 4 - this.legOffset, // Espacées davantage pour les jambes plus larges
-      legY, 
-      legWidth, 
-      legHeight
-    );
-    
-    // === PIEDS ===
-    ctx.fillStyle = '#654321'; // Marron pour les chaussures
-    // Pied gauche
-    ctx.fillRect(
-      centerX - 12 + this.legOffset - 2, 
-      legY + legHeight, 
-      legWidth + 4, 
-      4
-    );
-    
-    // Pied droit
-    ctx.fillRect(
-      centerX + 4 - this.legOffset - 2, 
-      legY + legHeight, 
-      legWidth + 4, 
-      4
-    );
-    
-    // === CORPS ===
-    const bodyWidth = 24; // Agrandi de 16 à 24
-    const bodyHeight = 27; // Agrandi de 18 à 27
-    const bodyY = centerY - 6; // Ajusté pour la nouvelle taille
-    
-    ctx.fillStyle = clothingColor;
-    ctx.fillRect(
-      centerX - bodyWidth/2, 
-      bodyY, 
-      bodyWidth, 
-      bodyHeight
-    );
-    
-    // Détail du corps (boutons ou motif)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.fillRect(centerX - 1.5, bodyY + 6, 3, 3); // Boutons agrandis
-    ctx.fillRect(centerX - 1.5, bodyY + 12, 3, 3);
-    ctx.fillRect(centerX - 1.5, bodyY + 18, 3, 3);
-    
-    // === BRAS EN POSITION DE VISÉE ===
-    const armWidth = 6; // Agrandi de 4 à 6
-    const armLength = 21; // Agrandi de 14 à 21
-    const armY = bodyY + 3; // Ajusté pour la nouvelle taille
-    
-    // Bras gauche (supporte l'arme en avant)
-    ctx.fillStyle = limbColor;
-    const leftArmX = centerX - bodyWidth/2 - armWidth + 6; // Ajusté pour la nouvelle taille
-    const leftArmY = armY - 3; // Ajusté pour la nouvelle taille
-    
-    if (currentWeapon.name === "AK47") {
-      // Pour l'AK47, bras gauche étendu vers l'avant pour supporter l'arme
-      ctx.fillRect(leftArmX + 9, leftArmY, armWidth, armLength - 3); // Dimensions ajustées
-      ctx.fillRect(leftArmX + 15, leftArmY + 6, armWidth + 3, 9); // Avant-bras étendu agrandi
-    } else {
-      // Pour le Glock, bras gauche en position de support
-      ctx.fillRect(leftArmX + 4, leftArmY + 3, armWidth, armLength - 6); // Dimensions ajustées
-    }
-    
-    // Bras droit (tient l'arme, étendu vers la droite)
-    const rightArmX = centerX + bodyWidth/2 - 3; // Ajusté pour la nouvelle taille
-    const rightArmY = armY - 1.5; // Position de visée ajustée
-    
-    ctx.fillRect(rightArmX, rightArmY, armWidth + 3, armLength - 3); // Dimensions ajustées
-    ctx.fillRect(rightArmX + 6, rightArmY + 3, 9, armWidth); // Avant-bras étendu agrandi
-    
-    // === MAINS EN POSITION DE VISÉE ===
-    // Main gauche (supporte l'arme)
-    ctx.fillStyle = limbColor;
-    if (currentWeapon.name === "AK47") {
-      // Main gauche sous le garde-main de l'AK47
-      ctx.fillRect(leftArmX + 18, leftArmY + 12, 4.5, 4.5); // Main agrandie
-    } else {
-      // Main gauche pour supporter le pistolet
-      ctx.fillRect(leftArmX + 7.5, leftArmY + 12, 4.5, 4.5); // Main agrandie
-    }
-    
-    // Main droite (tient la crosse/poignée)
-    ctx.fillRect(rightArmX + 3, rightArmY + armLength - 6, 4.5, 6); // Main agrandie
-    
-    // === TÊTE ===
-    const headSize = 18; // Agrandi de 12 à 18
-    const headY = centerY - 24; // Ajusté pour la nouvelle taille
-    
+    // Tête en forme de cercle
     ctx.fillStyle = headColor;
-    ctx.fillRect(
-      centerX - headSize/2, 
-      headY, 
-      headSize, 
-      headSize
-    );
+    ctx.beginPath();
+    ctx.arc(centerX, headY, headSize/2, 0, 2 * Math.PI);
+    ctx.fill();
     
-    // === VISAGE ===
-    // Yeux
+    // === CHEVEUX/HAUT DU CRÂNE ===
+    ctx.fillStyle = '#654321'; // Marron foncé
+    ctx.beginPath();
+    ctx.arc(centerX, headY - 2, headSize/3, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // === VISAGE (détails minimaux) ===
+    // Yeux (petits points)
     ctx.fillStyle = '#000000';
-    ctx.fillRect(centerX - 4.5, headY + 4.5, 3, 3); // Yeux agrandis
-    ctx.fillRect(centerX + 1.5, headY + 4.5, 3, 3); // Yeux agrandis
+    ctx.beginPath();
+    ctx.arc(centerX - 3, headY - 1, 1, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(centerX + 3, headY - 1, 1, 0, 2 * Math.PI);
+    ctx.fill();
     
-    // Bouche
-    ctx.fillRect(centerX - 3, headY + 10.5, 6, 1.5); // Bouche agrandie
+    // Nez (petit point)
+    ctx.beginPath();
+    ctx.arc(centerX, headY + 1, 0.5, 0, 2 * Math.PI);
+    ctx.fill();
     
-    // === CHEVEUX ===
-    ctx.fillStyle = '#654321'; // Marron
-    ctx.fillRect(centerX - headSize/2, headY - 3, headSize, 4.5); // Cheveux agrandis
-    
-    // === ARME PERMANENTE (selon l'arme équipée) ===
-    const weaponBaseX = rightArmX + 9; // Position alignée avec l'avant-bras droit agrandi
-    const weaponBaseY = rightArmY + 4.5; // Légèrement sous l'avant-bras ajusté
+    // === ARME PERMANENTE (vue de haut selon l'arme équipée) ===
+    const weaponBaseX = centerX + 15; // Position à droite de la tête
+    const weaponBaseY = centerY - 5; // Au niveau de la tête
     
     if (currentWeapon.name === "Glock17") {
-      // === GLOCK17 (Petit pistolet agrandi) ===
-      // Crosse du pistolet
-      ctx.fillStyle = '#333333'; // Gris foncé
-      ctx.fillRect(weaponBaseX, weaponBaseY, 4.5, 9); // Agrandi proportionnellement
-      
+      // === GLOCK17 (vue de haut simplifiée) ===
       // Corps principal du pistolet
       ctx.fillStyle = '#666666'; // Gris métallique
-      ctx.fillRect(weaponBaseX + 4.5, weaponBaseY + 1.5, 9, 6); // Agrandi
+      ctx.fillRect(weaponBaseX, weaponBaseY, 12, 3); // Forme allongée horizontale
       
       // Canon du pistolet
       ctx.fillStyle = '#222222'; // Très foncé
-      ctx.fillRect(weaponBaseX + 13.5, weaponBaseY + 3, 6, 3); // Agrandi
+      ctx.fillRect(weaponBaseX + 12, weaponBaseY + 0.5, 8, 2); // Canon
       
-      // Détail de la crosse
-      ctx.fillStyle = '#444444';
-      ctx.fillRect(weaponBaseX + 1.5, weaponBaseY + 3, 1.5, 3); // Agrandi
+      // Crosse du pistolet
+      ctx.fillStyle = '#333333'; // Gris foncé
+      ctx.fillRect(weaponBaseX - 3, weaponBaseY - 1, 6, 5); // Crosse
       
     } else if (currentWeapon.name === "AK47") {
-      // === AK47 (Grosse arme agrandie) ===
+      // === AK47 (vue de haut simplifiée) ===
       // Crosse
       ctx.fillStyle = '#8B4513'; // Marron foncé pour le bois
-      ctx.fillRect(weaponBaseX - 4.5, weaponBaseY, 7.5, 10.5); // Agrandi
+      ctx.fillRect(weaponBaseX - 8, weaponBaseY - 2, 10, 6); // Crosse large
       
       // Corps principal (receiver)
       ctx.fillStyle = '#555555'; // Gris métallique foncé
-      ctx.fillRect(weaponBaseX + 3, weaponBaseY + 1.5, 12, 7.5); // Agrandi
-      
-      // Garde-main
-      ctx.fillStyle = '#8B4513'; // Marron comme la crosse
-      ctx.fillRect(weaponBaseX + 15, weaponBaseY, 9, 10.5); // Agrandi
+      ctx.fillRect(weaponBaseX + 2, weaponBaseY - 1, 18, 4); // Corps allongé
       
       // Canon long
       ctx.fillStyle = '#333333'; // Gris très foncé
-      ctx.fillRect(weaponBaseX + 24, weaponBaseY + 3, 12, 4.5); // Agrandi
+      ctx.fillRect(weaponBaseX + 20, weaponBaseY, 15, 2); // Canon long
       
-      // Chargeur
+      // Chargeur (visible depuis le haut)
       ctx.fillStyle = '#444444';
-      ctx.fillRect(weaponBaseX + 9, weaponBaseY + 9, 4.5, 6); // Agrandi
-      
-      // Détails du corps
-      ctx.fillStyle = '#666666';
-      ctx.fillRect(weaponBaseX + 4.5, weaponBaseY + 3, 9, 1.5); // Agrandi
-      
-      // Bout du canon
-      ctx.fillStyle = '#111111';
-      ctx.fillRect(weaponBaseX + 36, weaponBaseY + 3.75, 1.5, 3); // Agrandi
+      ctx.fillRect(weaponBaseX + 8, weaponBaseY + 3, 6, 8); // Chargeur qui dépasse
     }
     
     // === FLASH DE TIR (si en train de tirer) ===
     if (this.cooldown > this.cooldownMax - 5) {
-      const flashX = currentWeapon.name === "Glock17" ? weaponBaseX + 19.5 : weaponBaseX + 37.5; // Positions ajustées
-      const flashY = weaponBaseY + 2.25; // Position ajustée
+      const flashX = currentWeapon.name === "Glock17" ? weaponBaseX + 20 : weaponBaseX + 35;
+      const flashY = weaponBaseY + 0.5;
       
-      // Flash de tir adapté à l'arme agrandie
+      // Flash de tir adapté à la vue de haut
       ctx.fillStyle = '#FFFF00'; // Jaune vif
-      const flashSize = currentWeapon.name === "Glock17" ? 3 : 4.5; // Tailles agrandies
-      ctx.fillRect(flashX, flashY, flashSize + 1.5, flashSize);
+      const flashSize = currentWeapon.name === "Glock17" ? 4 : 6;
+      ctx.fillRect(flashX, flashY, flashSize, 1);
       
       ctx.fillStyle = '#FFA500'; // Orange
-      ctx.fillRect(flashX + 1.5, flashY + 0.75, flashSize, flashSize - 1.5);
+      ctx.fillRect(flashX + 1, flashY - 0.5, flashSize - 1, 2);
       
       ctx.fillStyle = '#FF0000'; // Rouge au centre
-      ctx.fillRect(flashX + 2.25, flashY + 1.5, flashSize - 1.5, flashSize - 3);
+      ctx.fillRect(flashX + 2, flashY - 0.3, flashSize - 3, 1.6);
     }
     
     ctx.filter = 'none'; // Réinitialiser le filtre
