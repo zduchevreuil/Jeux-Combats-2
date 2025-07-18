@@ -43,21 +43,18 @@
       filter: brightness(0.93);
     }
     html, body {
-  width: 100vw;
-  height: 100vh;
-  min-width: 100vw;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background: linear-gradient(120deg, #8f5cff 0%, #ff6ec4 50%, #43e97b 100%);
-  overflow: hidden !important;
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden !important;
-  position: fixed;
-}
+      width: 100vw;
+      height: 100vh;
+      min-width: 100vw;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      overflow: hidden !important;
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+    }
     .menu-btn-replay {
       background: linear-gradient(90deg,#6dd5ed,#2193b0,#6dd5ed);
       color: #fff;
@@ -178,7 +175,6 @@
     }
     
     canvas {
-      background: linear-gradient(120deg, #8f5cff 0%, #ff6ec4 50%, #43e97b 100%);
       display: block;
       margin: 20px auto;
       border: 3px solid transparent;
@@ -188,8 +184,9 @@
         0 0 60px rgba(109, 213, 237, 0.2),
         inset 0 0 20px rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
-      animation: gameCanvasGlow 4s ease-in-out infinite alternate;
-#startScreen, #endScreen, #pauseScreen, #localMenu {
+      
+}
+#startScreen {
   position: absolute;
   top: 0;
   left: 0;
@@ -200,8 +197,22 @@
   justify-content: center;
   align-items: center;
   z-index: 10;
+  background-image: url('gun.avif');
 }
-    }
+#endScreen, #pauseScreen, #localMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+
+} 
+
     
     @keyframes gameCanvasGlow {
       0% { 
@@ -226,8 +237,7 @@
     }
     
     #startScreen,
-    #endScreen,
-    #pauseScreen {
+    #startScreen {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: url('gun.avif');
@@ -239,6 +249,22 @@
       font-size: 24px;
       z-index: 10;
       animation: screenSlideIn 0.5s ease-out;
+      background-image: url('gun.avif');
+      background-size: cover;
+      background-position: center;
+    }
+    #endScreen, #pauseScreen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      z-index: 10;
+      animation: screenSlideIn 0.5s ease-out;
+      
     }
     
     @keyframes screenSlideIn {
@@ -399,6 +425,7 @@
       transition: width 0.1s linear;
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
       animation: cooldownShine 1s ease-in-out infinite alternate;
+      
     }
     
     @keyframes cooldownShine {
@@ -419,6 +446,7 @@
       background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="0.5" fill="rgba(255,255,255,0.3)"/><circle cx="90" cy="20" r="0.3" fill="rgba(109,213,237,0.4)"/><circle cx="20" cy="90" r="0.4" fill="rgba(255,255,255,0.2)"/><circle cx="80" cy="80" r="0.2" fill="rgba(109,213,237,0.3)"/></svg>') repeat;
       animation: particleFloat 15s linear infinite;
       pointer-events: none;
+      
     }
     
     @keyframes particleFloat {
@@ -478,10 +506,11 @@
   </div>
 </div>
 <!-- Onglet boutique pièces -->
-<div id="shopPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:101; justify-content:center; align-items:center;">
+<!-- Onglet Pièces -->
+<div id="coinPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:101; justify-content:center; align-items:center;">
   <div style="background:linear-gradient(120deg,#ffd800 0%,#43e97b 100%); border-radius:32px; box-shadow:0 0 40px #ffd800,0 0 80px #43e97b; padding:48px 40px; min-width:340px; min-height:240px; display:flex; flex-direction:column; align-items:center;">
-    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #ffd800,0 0 30px #43e97b; letter-spacing:2px;">Boutique</h2>
-    <ul id="shopList" style="list-style:none; padding:0; margin-bottom:32px; font-size:1.25rem; color:#222; width:100%;">
+    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #ffd800,0 0 30px #43e97b; letter-spacing:2px;">Acheter des pièces</h2>
+    <ul id="coinList" style="list-style:none; padding:0; margin-bottom:32px; font-size:1.25rem; color:#222; width:100%;">
       <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px;">
         <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" style="width:38px; height:38px;">
         <span style="font-weight:700; color:#fff;">Pack 10 pièces</span>
@@ -498,7 +527,27 @@
         <button style="margin-left:auto; background:#43e97b; color:#fff; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (27,99€)</button>
       </li>
     </ul>
-    <button id="btnCloseShop" style="background:linear-gradient(90deg,#ffd800,#43e97b); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #ffd800; letter-spacing:1px;">Retour</button>
+    <button id="btnCloseCoin" style="background:linear-gradient(90deg,#ffd800,#43e97b); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #ffd800; letter-spacing:1px;">Retour</button>
+  </div>
+</div>
+
+<!-- Onglet Boutique -->
+<div id="shopPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:102; justify-content:center; align-items:center;">
+  <div style="background:linear-gradient(120deg,#43e97b 0%,#ffd800 100%); border-radius:32px; box-shadow:0 0 40px #43e97b,0 0 80px #ffd800; padding:48px 40px; min-width:340px; min-height:240px; display:flex; flex-direction:column; align-items:center;">
+    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #43e97b,0 0 30px #ffd800; letter-spacing:2px;">Boutique Attaques</h2>
+    <ul id="shopList" style="list-style:none; padding:0; margin-bottom:32px; font-size:1.25rem; color:#222; width:100%;">
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(0,0,0,0.18); border-radius:18px; padding:10px 18px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616494.png" style="width:38px; height:38px;">
+        <span style="font-weight:700; color:#fff;">Attaque Foudre</span>
+        <button style="margin-left:auto; background:#ffd800; color:#222; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (30 pièces)</button>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(0,0,0,0.18); border-radius:18px; padding:10px 18px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616490.png" style="width:38px; height:38px;">
+        <span style="font-weight:700; color:#fff;">Attaque Bombe</span>
+        <button style="margin-left:auto; background:#ffd800; color:#222; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (40 pièces)</button>
+      </li>
+    </ul>
+    <button id="btnCloseShop" style="background:linear-gradient(90deg,#43e97b,#ffd800); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #43e97b; letter-spacing:1px;">Retour</button>
   </div>
 </div>
 <!-- Liste d'amis pop-up -->
@@ -540,24 +589,27 @@
 </div>
 
   <!-- Bouton Quitter en bas à droite -->
-  <div style="position:absolute; bottom:40px; right:40px; z-index:2;">
+  <div style="position:absolute; top:30px; right:30px; z-index:2;">
     <button class="menu-btn-red" id="btnQuit">Quitter</button>
   </div>
 
   <!-- Bouton en haut à droite + affichage pièces -->
-  <div style="position:absolute; top:30px; right:30px; display:flex; align-items:center; gap:18px; z-index:2;">
+  <div style="position:absolute; top:30px; left:30px; z-index:2;">
+    <button id="coinButton" style="display:flex; align-items:center; height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; background:linear-gradient(90deg,#ffd800,#ff6a00); border:none; cursor:pointer; box-shadow:0 0 8px #ffd800; font-family:'Orbitron',monospace; font-weight:700; color:#fff;">
+      <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" alt="Pièce" style="width:32px; height:32px; margin-right:10px; filter:drop-shadow(0 0 4px #ffd800);">
+      <span id="coinCount">0</span>
+    </button>
+  </div>
+  <div style="position:absolute; top:30px; left:180px; display:flex; align-items:center; gap:18px; z-index:2;">
     <div style="position:relative; display:inline-block;">
       <button class="menu-btn" id="btnFriends" style="height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; display:flex; align-items:center;">Amis</button>
       <span id="friendsNotif" style="display:none; position:absolute; top:-10px; right:-10px; background:#43e97b; color:#fff; font-size:1.1rem; font-weight:700; border-radius:50%; padding:4px 10px; box-shadow:0 0 8px #43e97b; z-index:3;">3</span>
     </div>
-      <button id="coinButton" style="display:flex; align-items:center; height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; background:linear-gradient(90deg,#ffd800,#ff6a00); border:none; cursor:pointer; box-shadow:0 0 8px #ffd800; font-family:'Orbitron',monospace; font-weight:700; color:#fff;">
-        <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" alt="Pièce" style="width:32px; height:32px; margin-right:10px; filter:drop-shadow(0 0 4px #ffd800);">
-        <span id="coinCount">0</span>
-      </button>
+    <button class="menu-btn" id="btnShop" style="height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; background:linear-gradient(90deg,#8f5cff,#43e97b); color:#fff; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 8px #8f5cff; letter-spacing:1.5px;">Boutique</button>
   </div>
 
   <!-- Boutons en bas à gauche -->
-  <div style="position:absolute; bottom:40px; left:40px; display:flex; flex-direction:column; gap:22px; align-items:flex-start; z-index:2;">
+  <div style="position:absolute; bottom:40px; right:40px; display:flex; flex-direction:column; gap:22px; align-items:flex-end; z-index:2;">
     <button class="menu-btn" id="btnPlay" style="width:220px; height:56px; font-size:1.25rem;">Jouer</button>
     <button class="menu-btn" id="btnLocal" style="width:220px; height:56px; font-size:1.25rem;">en ligne</button>
     <button class="menu-btn" id="btnSettings" style="width:220px; height:56px; font-size:1.25rem; background:linear-gradient(90deg,#8f5cff,#43e97b); color:#fff; border:none; border-radius:22px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 8px 32px #8f5cff, 0 2px 0 #fff inset, 0 0 16px #43e97b; letter-spacing:1.5px; animation: buttonGlow 2.5s ease-in-out infinite alternate;">Paramètre</button>
@@ -566,10 +618,10 @@
 
 <!-- Sous-menu Local -->
 <div id="localMenu" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(circle at center,rgba(0,0,50,0.95) 0%,rgba(0,0,0,0.95) 70%); z-index:20; flex-direction:column; justify-content:center; align-items:center;">
-  <h2 style="font-size:2.2rem; margin-bottom:20px; color:#6dd5ed;">Mode Local</h2>
+  <h2 style="font-size:2.2rem; margin-bottom:20px; color:#6dd5ed;">Mode en ligne</h2>
   <button class="menu-btn" id="btnCreateServer">Créer un serveur</button>
   <div style="margin-top:30px; width:350px; background:rgba(255,255,255,0.05); border-radius:12px; padding:18px; box-shadow:0 0 20px #2193b0;">
-    <h3 style="color:#fff; font-size:1.3rem; margin-bottom:10px;">Serveurs locaux détectés :</h3>
+    <h3 style="color:#fff; font-size:1.3rem; margin-bottom:10px;">Serveurs d'amis en ligne :</h3>
     <ul id="localServerList" style="list-style:none; padding:0; color:#fff; font-size:1.1rem;">
       <!-- Les serveurs locaux seront affichés ici dynamiquement -->
     </ul>
@@ -588,6 +640,29 @@
 </div>
 
 <script>
+// Gestion achat attaques spéciales
+document.addEventListener('DOMContentLoaded', () => {
+  // Attaque Foudre
+  document.querySelector('#shopList button:nth-of-type(1)').onclick = function() {
+    if (coins < 30) {
+      alert('Pas assez de pièces pour acheter l\'attaque Foudre !');
+      return;
+    }
+    // Rien ne se passe pour l'instant si assez de pièces
+  };
+  // Attaque Bombe
+  document.querySelector('#shopList button:nth-of-type(2)').onclick = function() {
+    if (coins < 40) {
+      alert('Pas assez de pièces pour acheter l\'attaque Bombe !');
+      return;
+    }
+    // Rien ne se passe pour l'instant si assez de pièces
+  };
+});
+// Affichage de la boutique au clic sur le bouton Boutique
+document.getElementById('btnShop').onclick = function() {
+  document.getElementById('shopPopup').style.display = 'flex';
+};
 // Affichage des paramètres au clic sur le bouton Paramètre
 document.getElementById('btnSettings').onclick = function() {
   document.getElementById('settingsPopup').style.display = 'flex';
@@ -605,10 +680,13 @@ document.getElementById('volumeSlider').addEventListener('input', function(e) {
 });
 // Affichage de la boutique au clic sur le bouton pièce
 document.getElementById('coinButton').onclick = function() {
-  document.getElementById('shopPopup').style.display = 'flex';
+  document.getElementById('coinPopup').style.display = 'flex';
 };
 document.getElementById('btnCloseShop').onclick = function() {
   document.getElementById('shopPopup').style.display = 'none';
+};
+document.getElementById('btnCloseCoin').onclick = function() {
+  document.getElementById('coinPopup').style.display = 'none';
 };
 // Affichage de la liste d'amis au clic sur Amis
 document.getElementById('btnFriends').onclick = function() {
@@ -655,6 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnQuit = document.getElementById('btnQuit');
   const btnCreateServer = document.getElementById('btnCreateServer');
   const localServerList = document.getElementById('localServerList');
+  const body = document.body;
 
   // Bouton Local : Affiche le sous-menu Local
   if (btnLocal) {
@@ -677,6 +756,11 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPlay.onclick = () => {
       startGame();
       startScreen.style.display = 'none';
+      // Changer le background quand on joue
+      body.style.backgroundImage = "url('mur_de10.png')";
+      body.style.backgroundSize = "cover";
+      body.style.backgroundPosition = "center";
+      body.style.backgroundRepeat = "no-repeat";
     };
   }
 
@@ -879,7 +963,7 @@ class Wall {
   }
 }
 
-const shootSound = new Audio("pixel-explosion-319166.mp3");
+const shootSound = new Audio("SHOOT003.mp3");
 shootSound.volume = 0.3; // Volume ajustable (0.0 à 1.0)
 
 
@@ -1148,7 +1232,7 @@ class Player {
     // Créer un trou dans le sol (ajout à la liste globale)
     window.explosionHoles.push({ x, y, radius: 60 + Math.random()*40 });
     // Effet sonore
-    const explosionSound = new Audio('pixel-explosion-319166.mp3');
+    const explosionSound = new Audio('SHOOT003.mp3');
     explosionSound.currentTime = 0;
     explosionSound.play().catch(() => {});
 
