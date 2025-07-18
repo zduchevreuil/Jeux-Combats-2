@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,37 +6,135 @@
   <link rel="stylesheet" href="style.css">
   <title>Jeu combat 4 directions amélioré</title>
   <style>
+    html, body {
+  width: 100vw;
+  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: linear-gradient(120deg, #161e36 0%, #2b2bff 100%);
+  overflow: hidden !important;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden !important;
+  position: fixed;
+}
+    .menu-btn-replay {
+      background: linear-gradient(90deg,#6dd5ed,#2193b0,#6dd5ed);
+      color: #fff;
+      border-radius: 30px;
+      font-weight: 700;
+      padding: 18px 50px;
+      font-size: 1.5rem;
+      font-family: 'Orbitron', monospace;
+      margin: 18px 0 0 0;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(109,213,237,0.25),0 0 20px #2193b0;
+      animation: buttonGlow 2s ease-in-out infinite alternate;
+    }
+    .menu-btn-replay:hover {
+      background: linear-gradient(90deg,#2193b0,#6dd5ed,#2193b0);
+      box-shadow: 0 12px 40px #6dd5ed,0 0 30px #2193b0;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    .menu-btn-red {
+      background: linear-gradient(90deg,#ff4444,#b00000,#ff4444);
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(255,68,68,0.25),0 0 20px #b00000;
+      border-radius: 30px;
+      font-weight: 700;
+      padding: 18px 50px;
+      font-size: 1.5rem;
+      font-family: 'Orbitron', monospace;
+      margin: 0 0 0 0;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+      animation: buttonGlow 2s ease-in-out infinite alternate
+    }
+    .menu-btn-red:hover {
+      background: linear-gradient(90deg,#b00000,#ff4444,#b00000);
+      box-shadow: 0 12px 40px #ff4444,0 0 30px #b00000;
+      color: #fff;
+      transform: scale(1.05);
+    }
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
     
     * {
       box-sizing: border-box;
     }
     
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #001122 100%);
-      color: white;
-      font-family: 'Rajdhani', sans-serif;
-      text-align: center;
-      overflow: hidden;
-      user-select: none;
-      min-height: 100vh;
+    button {
+      font-family: 'Orbitron', 'Rajdhani', Arial, sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 14px 38px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(90deg, #2b2bff 0%, #00c3ff 100%);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.30), 0 2px 0 #fff inset;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(.4,2,.3,1);
+      margin-bottom: 12px;
+      outline: none;
       position: relative;
+      z-index: 1;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #000, 0 0 2px #00c3ff;
+      overflow: hidden;
+      box-sizing: border-box;
+      animation: buttonGlow 2.5s ease-in-out infinite alternate;
     }
-    
-    /* Particules d'arrière-plan animées */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="0.5" fill="rgba(100,200,255,0.2)"/><circle cx="40" cy="80" r="0.8" fill="rgba(255,100,100,0.15)"/><circle cx="90" cy="90" r="0.3" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-      animation: twinkle 20s linear infinite;
-      pointer-events: none;
-      z-index: -1;
+
+    button:hover, button:focus {
+      background: linear-gradient(90deg, #00c3ff 0%, #2b2bff 100%);
+      box-shadow: 0 10px 32px rgba(0,0,0,0.40), 0 3px 0 #fff inset;
+      transform: translateY(-3px) scale(1.07);
+      filter: brightness(1.15) saturate(1.2);
+      outline: none;
     }
+
+    button:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      filter: brightness(0.95);
+    }
+
+    .menu-btn-replay {
+      background: linear-gradient(90deg, #ff2b2b 0%, #ff7b00 100%);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(255,43,43,0.25), 0 2px 0 #fff inset;
+      text-shadow: 0 2px 8px #000, 0 0 2px #ff7b00;
+      animation: buttonGlowRed 2.5s ease-in-out infinite alternate;
+    }
+
+    .menu-btn-replay:hover, .menu-btn-replay:focus {
+      background: linear-gradient(90deg, #ff7b00 0%, #ff2b2b 100%);
+      box-shadow: 0 10px 32px rgba(255,43,43,0.40), 0 3px 0 #fff inset;
+      filter: brightness(1.15) saturate(1.2);
+    }
+
+    @keyframes buttonGlowRed {
+      0% { box-shadow: 0 0 16px #ff2b2b, 0 2px 0 #fff inset; }
+      100% { box-shadow: 0 0 32px #ff7b00, 0 2px 0 #fff inset; }
+    }
+/* Correction : la règle ci-dessus était mal placée, à remettre dans un sélecteur valide si besoin */
     
     @keyframes twinkle {
       0% { transform: translateY(0px); }
@@ -54,6 +153,18 @@
         inset 0 0 20px rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
       animation: gameCanvasGlow 4s ease-in-out infinite alternate;
+#startScreen, #endScreen, #pauseScreen, #localMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
     }
     
     @keyframes gameCanvasGlow {
@@ -164,26 +275,35 @@
       animation: fadeInUp 0.8s ease-out;
     }
     
-    button {
-      padding: 15px 35px;
-      font-size: 20px;
+
+    .menu-btn {
+      padding: 18px 50px;
+      font-size: 1.5rem;
       font-family: 'Orbitron', monospace;
-      font-weight: 600;
-      margin-top: 20px;
+      font-weight: 700;
+      margin: 0 0 0 0;
       cursor: pointer;
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(90deg,#6dd5ed,#2193b0,#6dd5ed);
       color: white;
       border: none;
-      border-radius: 25px;
-      transition: all 0.3s ease;
-      box-shadow: 
-        0 5px 15px rgba(102, 126, 234, 0.4),
-        0 0 20px rgba(102, 126, 234, 0.2);
+      border-radius: 30px;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 30px rgba(109,213,237,0.25),0 0 20px #2193b0;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       position: relative;
       overflow: hidden;
+      margin-bottom: 10px;
       animation: buttonGlow 2s ease-in-out infinite alternate;
+    }
+    .menu-btn:hover {
+      background: linear-gradient(90deg,#2193b0,#6dd5ed,#2193b0);
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px #6dd5ed,0 0 30px #2193b0;
+    }
+    .menu-btn:active {
+      transform: scale(0.98);
+      background: linear-gradient(90deg,#6dd5ed,#2193b0,#6dd5ed);
     }
     
     @keyframes buttonGlow {
@@ -290,34 +410,140 @@
         font-size: 16px; 
       }
       canvas {
-        width: 90vw;
-        height: 67.5vw;
-        max-width: 800px;
-        max-height: 600px;
+        width: 85vw;
+        height: 57.5vw;
+        max-width: 1100px;
+        max-height: 750px;
       }
     }
   </style>
 </head>
 <body>
 
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+<canvas id="gameCanvas" width="1100" height="750"></canvas>
+
 
 <div id="startScreen">
-  <h1>⚔️ Combat POO 4 directions amélioré ⚔️</h1>
-  <p>2 manettes pour jouer.<br>
-     Déplacement & tir avec joystick.<br>
-     Tir directionnel uniquement haut, bas, gauche, droite.<br>
-     Tir avec bouton X (bouton 2).<br>
-     Bouclier avec bouton Y (bouton 3) - empêche le tir.<br>
-     Changer d'arme avec bouton A (bouton 0) : Glock17 ↔ AK47.<br>
-     Appuyez sur P ou bouton Start pour mettre en pause.<br>
-     Appuyez sur F pour le plein écran.</p>
-  <button onclick="startGame()">Commencer</button>
+  <h1 style="font-size:3.5rem; margin-bottom:40px; background: linear-gradient(90deg,#6dd5ed,#2193b0,#6dd5ed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">⚔️ Jeux-Combats 2 ⚔️</h1>
+
+
+  <!-- Boutons en haut à gauche -->
+  <div style="position:absolute; top:685px; left:40px; display:flex; flex-direction:column; gap:12px; z-index:2;">
+    <button class="menu-btn" id="btnSettings">Paramètre</button>
+  </div>
+<!-- Onglet paramètres -->
+<div id="settingsPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:102; justify-content:center; align-items:center;">
+  <div style="background:linear-gradient(120deg,#43e97b 0%,#ffd800 100%); border-radius:32px; box-shadow:0 0 40px #43e97b,0 0 80px #ffd800; padding:48px 40px; min-width:340px; min-height:180px; display:flex; flex-direction:column; align-items:center;">
+    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #43e97b,0 0 30px #ffd800; letter-spacing:2px;">Paramètres</h2>
+    <div style="width:100%; margin-bottom:32px;">
+      <label for="volumeSlider" style="font-size:1.2rem; color:#fff; font-weight:700; margin-bottom:12px; display:block;">Volume du son</label>
+      <input type="range" id="volumeSlider" min="0" max="100" value="70" style="width:100%; accent-color:#43e97b;">
+    </div>
+    <button id="btnCloseSettings" style="background:linear-gradient(90deg,#ffd800,#43e97b); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #ffd800; letter-spacing:1px;">Retour</button>
+  </div>
+</div>
+<!-- Onglet boutique pièces -->
+<div id="shopPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:101; justify-content:center; align-items:center;">
+  <div style="background:linear-gradient(120deg,#ffd800 0%,#43e97b 100%); border-radius:32px; box-shadow:0 0 40px #ffd800,0 0 80px #43e97b; padding:48px 40px; min-width:340px; min-height:240px; display:flex; flex-direction:column; align-items:center;">
+    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #ffd800,0 0 30px #43e97b; letter-spacing:2px;">Boutique</h2>
+    <ul id="shopList" style="list-style:none; padding:0; margin-bottom:32px; font-size:1.25rem; color:#222; width:100%;">
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" style="width:38px; height:38px;">
+        <span style="font-weight:700; color:#fff;">Pack 10 pièces</span>
+        <button style="margin-left:auto; background:#43e97b; color:#fff; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (5,99€)</button>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" style="width:38px; height:38px;">
+        <span style="font-weight:700; color:#fff;">Pack 25 pièces</span>
+        <button style="margin-left:auto; background:#43e97b; color:#fff; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (15,99€)</button>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" style="width:38px; height:38px;">
+        <span style="font-weight:700; color:#fff;">Pack 50 pièces</span>
+        <button style="margin-left:auto; background:#43e97b; color:#fff; border:none; border-radius:12px; padding:6px 18px; font-size:1rem; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer;">Acheter (27,99€)</button>
+      </li>
+    </ul>
+    <button id="btnCloseShop" style="background:linear-gradient(90deg,#ffd800,#43e97b); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #ffd800; letter-spacing:1px;">Retour</button>
+  </div>
+</div>
+<!-- Liste d'amis pop-up -->
+<div id="friendsListPopup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:center;">
+  <div style="background:linear-gradient(120deg,#43e97b 0%,#ffd800 100%); border-radius:32px; box-shadow:0 0 40px #43e97b,0 0 80px #ffd800; padding:48px 40px; min-width:340px; min-height:240px; display:flex; flex-direction:column; align-items:center;">
+    <h2 style="color:#fff; margin-bottom:22px; font-size:2rem; font-family:'Orbitron',monospace; text-shadow:0 0 18px #43e97b,0 0 30px #ffd800; letter-spacing:2px;">👥 Amis en ligne</h2>
+    <ul id="friendsList" style="list-style:none; padding:0; margin-bottom:32px; font-size:1.25rem; color:#222; width:100%;">
+      <!-- Section amis en ligne -->
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px; transition:background 0.2s; cursor:pointer;">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" style="width:38px; height:38px; border-radius:50%; box-shadow:0 0 8px #43e97b; border:2px solid #ffd800;">
+        <span style="font-weight:700; color:#fff;">Alex</span>
+        <span style="margin-left:auto; color:#43e97b; font-size:1rem; font-weight:600;">en ligne</span>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px; transition:background 0.2s; cursor:pointer;">
+        <img src="https://randomuser.me/api/portraits/men/33.jpg" style="width:38px; height:38px; border-radius:50%; box-shadow:0 0 8px #43e97b; border:2px solid #ffd800;">
+        <span style="font-weight:700; color:#fff;">Sam</span>
+        <span style="margin-left:auto; color:#43e97b; font-size:1rem; font-weight:600;">en ligne</span>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.18); border-radius:18px; padding:10px 18px; transition:background 0.2s; cursor:pointer;">
+        <img src="https://randomuser.me/api/portraits/men/34.jpg" style="width:38px; height:38px; border-radius:50%; box-shadow:0 0 8px #43e97b; border:2px solid #ffd800;">
+        <span style="font-weight:700; color:#fff;">Chris</span>
+        <span style="margin-left:auto; color:#43e97b; font-size:1rem; font-weight:600;">en ligne</span>
+      </li>
+      <!-- Section amis hors ligne -->
+      <li style="font-size:1.1rem; color:#e74c3c; font-weight:700; margin:18px 0 8px 0; background:none; padding:0; cursor:default;">Hors ligne</li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:0; background:rgba(255,255,255,0.10); border-radius:18px; padding:10px 18px; transition:background 0.2s; cursor:not-allowed;">
+        <img src="https://randomuser.me/api/portraits/men/35.jpg" style="width:38px; height:38px; border-radius:50%; box-shadow:0 0 8px #aaa; border:2px solid #ccc; filter:grayscale(1);">
+        <span style="font-weight:700; color:#bbb;">Max</span>
+        <span style="margin-left:auto; color:#e74c3c; font-size:1rem; font-weight:600;">hors ligne</span>
+      </li>
+      <li style="display:flex; align-items:center; gap:16px; margin-bottom:0; background:rgba(255,255,255,0.10); border-radius:18px; padding:10px 18px; transition:background 0.2s; cursor:not-allowed;">
+        <img src="https://randomuser.me/api/portraits/women/36.jpg" style="width:38px; height:38px; border-radius:50%; box-shadow:0 0 8px #aaa; border:2px solid #ccc; filter:grayscale(1);">
+        <span style="font-weight:700; color:#bbb;">Lina</span>
+        <span style="margin-left:auto; color:#e74c3c; font-size:1rem; font-weight:600;">hors ligne</span>
+      </li>
+    </ul>
+    <button id="btnCloseFriends" style="background:linear-gradient(90deg,#ffd800,#43e97b); color:#fff; font-size:1.15rem; border:none; border-radius:18px; padding:12px 38px; font-family:'Orbitron',monospace; font-weight:700; cursor:pointer; box-shadow:0 0 12px #ffd800; letter-spacing:1px;">Retour</button>
+  </div>
+</div>
+
+  <!-- Bouton Quitter en bas à droite -->
+  <div style="position:absolute; bottom:40px; right:40px; z-index:2;">
+    <button class="menu-btn-red" id="btnQuit">Quitter</button>
+  </div>
+
+  <!-- Bouton en haut à droite + affichage pièces -->
+  <div style="position:absolute; top:30px; right:30px; display:flex; align-items:center; gap:18px; z-index:2;">
+    <div style="position:relative; display:inline-block;">
+      <button class="menu-btn" id="btnFriends" style="height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; display:flex; align-items:center;">Amis</button>
+      <span id="friendsNotif" style="display:none; position:absolute; top:-10px; right:-10px; background:#43e97b; color:#fff; font-size:1.1rem; font-weight:700; border-radius:50%; padding:4px 10px; box-shadow:0 0 8px #43e97b; z-index:3;">3</span>
+    </div>
+      <button id="coinButton" style="display:flex; align-items:center; height:52px; min-width:90px; padding:0 32px; font-size:1.35rem; border-radius:22px; background:linear-gradient(90deg,#ffd800,#ff6a00); border:none; cursor:pointer; box-shadow:0 0 8px #ffd800; font-family:'Orbitron',monospace; font-weight:700; color:#fff;">
+        <img src="https://cdn-icons-png.flaticon.com/512/138/138292.png" alt="Pièce" style="width:32px; height:32px; margin-right:10px; filter:drop-shadow(0 0 4px #ffd800);">
+        <span id="coinCount">0</span>
+      </button>
+  </div>
+
+  <!-- Boutons en bas à gauche -->
+  <div style="position:absolute; top: 500px; bottom:40px; left:40px; display:flex; flex-direction:column; gap:18px; align-items:flex-start; z-index:2;">
+    <button class="menu-btn" id="btnPlay">Jouer</button>
+    <button class="menu-btn" id="btnLocal">en ligne</button>
+  </div>
+</div>
+
+<!-- Sous-menu Local -->
+<div id="localMenu" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(circle at center,rgba(0,0,50,0.95) 0%,rgba(0,0,0,0.95) 70%); z-index:20; flex-direction:column; justify-content:center; align-items:center;">
+  <h2 style="font-size:2.2rem; margin-bottom:20px; color:#6dd5ed;">Mode Local</h2>
+  <button class="menu-btn" id="btnCreateServer">Créer un serveur</button>
+  <div style="margin-top:30px; width:350px; background:rgba(255,255,255,0.05); border-radius:12px; padding:18px; box-shadow:0 0 20px #2193b0;">
+    <h3 style="color:#fff; font-size:1.3rem; margin-bottom:10px;">Serveurs locaux détectés :</h3>
+    <ul id="localServerList" style="list-style:none; padding:0; color:#fff; font-size:1.1rem;">
+      <!-- Les serveurs locaux seront affichés ici dynamiquement -->
+    </ul>
+  </div>
+  <button class="menu-btn" id="btnBackLocal" style="margin-top:30px;">Retour</button>
 </div>
 
 <div id="endScreen">
   <h2 id="endMessage">Fin du jeu</h2>
-  <button onclick="restartGame()">Rejouer</button>
+  <button class="menu-btn-replay" onclick="restartGame()">Rejouer</button>
 </div>
 
 <div id="pauseScreen">
@@ -326,8 +552,240 @@
 </div>
 
 <script>
+// Affichage des paramètres au clic sur le bouton Paramètre
+document.getElementById('btnSettings').onclick = function() {
+  document.getElementById('settingsPopup').style.display = 'flex';
+};
+document.getElementById('btnCloseSettings').onclick = function() {
+  document.getElementById('settingsPopup').style.display = 'none';
+};
+// Réglage du volume sonore
+document.getElementById('volumeSlider').addEventListener('input', function(e) {
+  const volume = e.target.value / 100;
+  // Appliquer le volume à tous les sons du jeu
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.volume = volume;
+  });
+});
+// Affichage de la boutique au clic sur le bouton pièce
+document.getElementById('coinButton').onclick = function() {
+  document.getElementById('shopPopup').style.display = 'flex';
+};
+document.getElementById('btnCloseShop').onclick = function() {
+  document.getElementById('shopPopup').style.display = 'none';
+};
+// Affichage de la liste d'amis au clic sur Amis
+document.getElementById('btnFriends').onclick = function() {
+  document.getElementById('friendsListPopup').style.display = 'flex';
+};
+document.getElementById('btnCloseFriends').onclick = function() {
+  document.getElementById('friendsListPopup').style.display = 'none';
+};
+  const online_fiend = 3
+// Notification dynamique sur le bouton Amis
+document.addEventListener('DOMContentLoaded', () => {
+  setFriendsOnline(online_fiend); // Exemple : 3 amis en ligne au démarrage
+});
+function setFriendsOnline(n) {
+  const notif = document.getElementById('friendsNotif');
+  if (notif) {
+    if (n > 0) {
+      notif.textContent = n;
+      notif.style.display = 'inline-block';
+    } else {
+      notif.style.display = 'none';
+    }
+  }
+}
+// Affiche la notification au démarrage (exemple : 3 amis en ligne)
+
+// Gestion des pièces (exemple simple)
+let coins = 0;
+function setCoins(n) {
+  coins = n;
+  document.getElementById('coinCount').textContent = coins;
+}
+// Exemple : donner 10 pièces au démarrage
+document.addEventListener('DOMContentLoaded', () => {
+  setCoins(10);
+});
+// Gestion des menus principaux
+document.addEventListener('DOMContentLoaded', () => {
+  const startScreen = document.getElementById('startScreen');
+  const localMenu = document.getElementById('localMenu');
+  const btnLocal = document.getElementById('btnLocal');
+  const btnBackLocal = document.getElementById('btnBackLocal');
+  const btnPlay = document.getElementById('btnPlay');
+  const btnQuit = document.getElementById('btnQuit');
+  const btnCreateServer = document.getElementById('btnCreateServer');
+  const localServerList = document.getElementById('localServerList');
+
+  // Bouton Local : Affiche le sous-menu Local
+  if (btnLocal) {
+    btnLocal.onclick = () => {
+      startScreen.style.display = 'none';
+      localMenu.style.display = 'flex';
+    };
+  }
+
+  // Bouton Retour du menu Local
+  if (btnBackLocal) {
+    btnBackLocal.onclick = () => {
+      localMenu.style.display = 'none';
+      startScreen.style.display = 'flex';
+    };
+  }
+
+  // Bouton Jouer : démarre la partie
+  if (btnPlay) {
+    btnPlay.onclick = () => {
+      startGame();
+      startScreen.style.display = 'none';
+    };
+  }
+
+  // Bouton Quitter : ferme la fenêtre (pour les apps desktop)
+  if (btnQuit) {
+    btnQuit.onclick = () => {
+      window.close();
+    };
+  }
+
+  // Bouton Créer un serveur (simulation)
+  if (btnCreateServer) {
+    btnCreateServer.onclick = () => {
+      // Ajoute un serveur fictif à la liste
+      const li = document.createElement('li');
+      li.textContent = 'Serveur local #' + (localServerList.children.length + 1);
+      li.style.cursor = 'pointer';
+      li.onclick = () => alert('Connexion au serveur local...');
+      localServerList.appendChild(li);
+    };
+  }
+
+  // Simulation de serveurs locaux détectés au démarrage
+  if (localServerList) {
+    for (let i = 1; i <= 2; i++) {
+      const li = document.createElement('li');
+      li.textContent = 'Serveur local #' + i;
+      li.style.cursor = 'pointer';
+      li.onclick = () => alert('Connexion au serveur local...');
+      localServerList.appendChild(li);
+    }
+  }
+});
 const wallImage = new Image();
 wallImage.src = "mur_de10.png";
+
+class Portal {
+  constructor(x, y, width, height, destinationX, destinationY, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.destinationX = destinationX;
+    this.destinationY = destinationY;
+    this.color = color;
+    this.animationTime = 0;
+    this.cooldown = 0; // Cooldown pour éviter les téléportations multiples
+  }
+  
+  draw(ctx) {
+    this.animationTime++;
+    
+    ctx.save();
+    
+    // Effet de portail animé
+    const pulseIntensity = Math.sin(this.animationTime * 0.1) * 0.5 + 0.5;
+    const rotationSpeed = this.animationTime * 0.05;
+    
+    // Fond du portail
+    ctx.fillStyle = `rgba(${this.color}, 0.3)`;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    
+    // Cercle central du portail
+    const centerX = this.x + this.width / 2;
+    const centerY = this.y + this.height / 2;
+    const radius = Math.min(this.width, this.height) / 3;
+    
+    // Gradient radial pour l'effet de portail
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 2);
+    gradient.addColorStop(0, `rgba(${this.color}, ${0.8 * pulseIntensity})`);
+    gradient.addColorStop(0.5, `rgba(${this.color}, ${0.4 * pulseIntensity})`);
+    gradient.addColorStop(1, `rgba(${this.color}, 0.1)`);
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * (1 + pulseIntensity * 0.2), 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Particules tournantes
+    for (let i = 0; i < 8; i++) {
+      const angle = rotationSpeed + (i * Math.PI / 4);
+      const particleX = centerX + Math.cos(angle) * radius * 0.8;
+      const particleY = centerY + Math.sin(angle) * radius * 0.8;
+      
+      ctx.fillStyle = `rgba(${this.color}, ${0.8 * pulseIntensity})`;
+      ctx.beginPath();
+      ctx.arc(particleX, particleY, 2, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    
+    // Bordure lumineuse
+    ctx.strokeStyle = `rgba(${this.color}, ${0.9 * pulseIntensity})`;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = `rgb(${this.color})`;
+    ctx.shadowBlur = 10 * pulseIntensity;
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    
+    ctx.restore();
+  }
+  
+  checkCollision(player) {
+    // Collision cercle-rectangle pour les portails
+    const playerCenter = player.getCollisionCenter();
+    const closestX = Math.max(this.x, Math.min(playerCenter.x, this.x + this.width));
+    const closestY = Math.max(this.y, Math.min(playerCenter.y, this.y + this.height));
+    
+    const distX = playerCenter.x - closestX;
+    const distY = playerCenter.y - closestY;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+    
+    return distance < player.collisionRadius;
+  }
+  
+  teleport(player) {
+    // Vérifier si le joueur peut se téléporter (cooldown du portail ET cooldown global du joueur)
+    if (this.cooldown <= 0 && player.teleportCooldown <= 0) {
+      // Effet de téléportation
+      player.x = this.destinationX;
+      player.y = this.destinationY;
+      
+      // Activer les cooldowns
+      this.cooldown = 60; // 1 seconde de cooldown pour ce portail
+      player.teleportCooldown = player.maxTeleportCooldown; // 5 secondes de cooldown global
+      
+      // Créer des particules de téléportation
+      for (let i = 0; i < 15; i++) {
+        player.particles.push(new Particle(
+          player.x + player.width / 2,
+          player.y + player.height / 2,
+          `rgb(${this.color})`,
+          50
+        ));
+      }
+      
+      return true;
+    }
+    return false;
+  }
+  
+  update() {
+    if (this.cooldown > 0) {
+      this.cooldown--;
+    }
+  }
+}
 
 class Wall {
   constructor(x, y, width, height, image) {
@@ -460,16 +918,16 @@ class Bullet {
   }
   
   isOutOfBounds() {
-    return this.x < 0 || this.x > 800 || this.y < 0 || this.y > 600;
+    return this.x < 0 || this.x > 1100 || this.y < 0 || this.y > 750;
   }
   
   checkCollision(player) {
-    // Cercle-rectangle collision
-    const closestX = Math.max(player.x, Math.min(this.x, player.x + player.width));
-    const closestY = Math.max(player.y, Math.min(this.y, player.y + player.height));
-    const distX = this.x - closestX;
-    const distY = this.y - closestY;
-    return (distX * distX + distY * distY) < (this.radius * this.radius) && player.alive;
+    // Collision cercle-cercle entre la balle et la zone de collision du joueur
+    const playerCenter = player.getCollisionCenter();
+    const distX = this.x - playerCenter.x;
+    const distY = this.y - playerCenter.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+    return distance < (this.radius + player.collisionRadius) && player.alive;
   }
 }
 
@@ -635,180 +1093,85 @@ class DamageText {
   }
 }
 
-class Shield {
-  constructor(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.color = '#ffff00'; // Jaune
-    this.active = false;
-    this.animationTime = 0;
-    this.durability = 100; // Durabilité du bouclier
-    this.maxDurability = 100;
-    this.maxActiveTime = 600; // 10 secondes à 60 FPS
-    this.activeTime = 0;
-    this.cooldownTime = 0;
-    this.maxCooldown = 600; // 10 secondes de cooldown
-    this.hitsTaken = 0;
-    this.maxHits = 5; // Disparaît après 5 tirs
-    this.canActivate = true;
-  }
-  
-  activate(playerX, playerY, playerWidth, playerHeight) {
-    if (!this.canActivate || this.cooldownTime > 0) return;
-    
-    this.active = true;
-    this.x = playerX - 5;
-    this.y = playerY - 5;
-    this.width = playerWidth + 10;
-    this.height = playerHeight + 10;
-    
-    // Ne remettre à zéro que si c'est une nouvelle activation complète
-    if (this.activeTime >= this.maxActiveTime) {
-      this.activeTime = 0;
-      this.hitsTaken = 0;
-    }
-  }
-  
-  deactivate() {
-    if (this.active) {
-      this.active = false;
-      // NE PAS remettre à zéro activeTime pour permettre la reprise
-      // NE PAS démarrer le cooldown si c'est juste un relâchement du bouton
-    }
-  }
-  
-  forceDeactivate() {
-    // Désactivation forcée (par tirs ou temps)
-    this.active = false;
-    this.cooldownTime = this.maxCooldown;
-    this.canActivate = false;
-    this.activeTime = 0; // Reset complet après désactivation forcée
-    this.hitsTaken = 0;
-  }
-  
-  reset() {
-    this.active = false;
-    this.activeTime = 0;
-    this.cooldownTime = 0;
-    this.hitsTaken = 0;
-    this.canActivate = true;
-    this.animationTime = 0;
-  }
-  
-  update() {
-    if (this.active) {
-      this.animationTime++;
-      this.activeTime++;
-      
-      // Désactiver après 10 secondes
-      if (this.activeTime >= this.maxActiveTime) {
-        this.forceDeactivate();
-      }
-    }
-    
-    // Gérer le cooldown
-    if (this.cooldownTime > 0) {
-      this.cooldownTime--;
-      if (this.cooldownTime <= 0) {
-        this.canActivate = true;
-      }
-    }
-  }
-  
-  takeDamage() {
-    if (!this.active) return false;
-    
-    this.hitsTaken++;
-    
-    // Désactiver après 5 tirs
-    if (this.hitsTaken >= this.maxHits) {
-      this.forceDeactivate();
-      return true; // Bouclier détruit
-    }
-    
-    return false; // Bouclier encore actif
-  }
-  
-  draw(ctx) {
-    if (!this.active) return;
-    
-    ctx.save();
-    
-    // Calcul de l'intensité selon le temps restant et les hits
-    const timeRatio = 1 - (this.activeTime / this.maxActiveTime);
-    const hitRatio = 1 - (this.hitsTaken / this.maxHits);
-    const intensity = Math.min(timeRatio, hitRatio);
-    
-    // Effet de pulsation plus rapide quand le bouclier se fragilise
-    const pulseSpeed = 0.2 + (1 - intensity) * 0.5;
-    const pulse = Math.sin(this.animationTime * pulseSpeed) * 0.1 + 0.9;
-    const alpha = (0.6 + intensity * 0.3) * pulse;
-    
-    // Couleur qui change selon l'état
-    let shieldColor = this.color;
-    if (intensity < 0.5) {
-      // Passe au rouge quand le bouclier se fragilise
-      const redIntensity = (0.5 - intensity) * 2;
-      shieldColor = `rgb(${255}, ${255 * (1 - redIntensity)}, 0)`;
-    }
-    
-    // Dessiner le bouclier avec effet de lueur
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = shieldColor;
-    ctx.shadowColor = shieldColor;
-    ctx.shadowBlur = 15 + (1 - intensity) * 10;
-    
-    // Forme du bouclier (rectangle arrondi)
-    ctx.beginPath();
-    ctx.roundRect(this.x, this.y, this.width, this.height, 8);
-    ctx.fill();
-    
-    // Effet de bordure brillante
-    ctx.globalAlpha = 0.8;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    
-    // Effet d'énergie au centre
-    ctx.globalAlpha = 0.4 * intensity;
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.roundRect(this.x + 3, this.y + 3, this.width - 6, this.height - 6, 5);
-    ctx.fill();
-    
-    ctx.restore();
-  }
-  
-  checkCollision(bullet) {
-    if (!this.active) return false;
-    
-    // Vérifier si la balle touche le bouclier
-    const bulletLeft = bullet.x - bullet.radius;
-    const bulletRight = bullet.x + bullet.radius;
-    const bulletTop = bullet.y - bullet.radius;
-    const bulletBottom = bullet.y + bullet.radius;
-    
-    const collision = !(bulletRight < this.x || 
-             bulletLeft > this.x + this.width || 
-             bulletBottom < this.y || 
-             bulletTop > this.y + this.height);
-    
-    if (collision) {
-      this.takeDamage();
-    }
-    
-    return collision;
-  }
-}
-
 class Player {
+// Liste globale des trous d'explosion
+  // Crée une explosion visuelle et sonore à la position donnée
+  createExplosion(x, y) {
+    // Détruire les murs touchés par l'explosion
+    const explosionRadius = 80;
+    for (let i = walls.length - 1; i >= 0; i--) {
+      const wall = walls[i];
+      // Centre du mur
+      const wallCenterX = wall.x + wall.width / 2;
+      const wallCenterY = wall.y + wall.height / 2;
+      const dist = Math.hypot(wallCenterX - x, wallCenterY - y);
+      if (dist < explosionRadius) {
+        walls.splice(i, 1);
+      }
+    }
+    // Créer un trou dans le sol (ajout à la liste globale)
+    window.explosionHoles.push({ x, y, radius: 60 + Math.random()*40 });
+    // Effet sonore
+    const explosionSound = new Audio('pixel-explosion-319166.mp3');
+    explosionSound.currentTime = 0;
+    explosionSound.play().catch(() => {});
+
+    // Particules d'explosion (plus nombreuses et plus grandes)
+    for (let i = 0; i < 64; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = 12 + Math.random() * 12;
+      const dx = Math.cos(angle) * speed;
+      const dy = Math.sin(angle) * speed;
+      const color = `rgba(${200+Math.random()*55},${150+Math.random()*105},0,1)`;
+      this.particles.push(new Particle(x, y, color, 80, dx, dy));
+    }
+    // Onde de choc blanche (plus grande)
+    for (let i = 0; i < 24; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = 16 + Math.random() * 16;
+      const dx = Math.cos(angle) * speed;
+      const dy = Math.sin(angle) * speed;
+      this.particles.push(new Particle(x, y, 'white', 120, dx, dy));
+    }
+
+    // Particules de feu (orange/rouge)
+    for (let i = 0; i < 40; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = 8 + Math.random() * 10;
+      const dx = Math.cos(angle) * speed;
+      const dy = Math.sin(angle) * speed;
+      const fireColor = `rgba(${220+Math.random()*35},${60+Math.random()*60},0,${0.7+Math.random()*0.3})`;
+      this.particles.push(new Particle(x, y, fireColor, 90, dx, dy));
+    }
+
+    // Particules de fumée (gris/noir, plus lentes et plus larges)
+    for (let i = 0; i < 30; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = 4 + Math.random() * 6;
+      const dx = Math.cos(angle) * speed;
+      const dy = Math.sin(angle) * speed;
+      const smokeColor = `rgba(${50+Math.random()*80},${50+Math.random()*80},${50+Math.random()*80},${0.3+Math.random()*0.3})`;
+      this.particles.push(new Particle(x, y, smokeColor, 140, dx, dy));
+    }
+  }
   constructor(x, y, color, gamepadIndex) {
     this.x = x; this.y = y;
-    this.width = color === 'red' ? 60 : 40; // Personnage rouge plus grand
-    this.height = color === 'red' ? 70 : 40; // Hauteur augmentée pour les jambes plus longues
+    this.width = 60; // Taille augmentée pour tous les personnages
+    this.height = 60; // Hauteur augmentée pour tous les personnages
     this.color = color;
+    
+    // Propriétés de collision circulaire pour correspondre au dessin
+    this.collisionRadius = 15; // Rayon de collision basé sur la tête
+    this.collisionOffsetX = 0; // Décalage par rapport au centre
+    this.collisionOffsetY = 0; // Décalage par rapport au centre
+    
+    // Système de rotation automatique selon la position de l'adversaire
+    this.facingDirection = color === 'red' ? 1 : -1; // 1 = droite, -1 = gauche
+    this.lastOpponentX = 0; // Position X de l'adversaire pour détecter les changements
+    
+    // Système de cooldown global de téléportation
+    this.teleportCooldown = 0; // Cooldown en frames (5 secondes = 300 frames à 60 FPS)
+    this.maxTeleportCooldown = 300; // 5 secondes
     this.gamepadIndex = gamepadIndex;
     this.speed = 4; // Réduit de 7 à 4 pour ralentir le joueur
     this.bullets = [];
@@ -825,8 +1188,8 @@ class Player {
     this.particles = []; // Particules d'effet
     this.bloodParticles = []; // Particules de sang
     
-    // Système d'animation pour le personnage rouge
-    this.isAnimated = (color === 'red'); // Seul le joueur rouge est animé
+    // Système d'animation pour les deux personnages
+    this.isAnimated = true; // Les deux joueurs sont maintenant animés
     this.walkCycle = 0; // Cycle de marche pour l'animation
     this.armSwing = 0; // Balancement des bras
     this.legOffset = 0; // Décalage des jambes
@@ -836,7 +1199,6 @@ class Player {
     this.recoilTime = 0; // Temps du recul
     this.maxRecoilTime = 8; // Durée du recul en frames
     
-    this.shield = new Shield(0, 0, 50, 50); // Bouclier du joueur
     this.currentWeapon = 0; // 0 = arme normale, 1 = arme rapide
     this.weapons = [
       {
@@ -895,7 +1257,6 @@ class Player {
     this.recoilOffset = 0;
     this.recoilTime = 0;
     
-    this.shield.reset(); // Réinitialiser complètement le bouclier
     this.currentWeapon = 0; // Réinitialiser à l'arme normale
     
     // Réinitialiser le système de rechargement pour chaque arme
@@ -904,6 +1265,44 @@ class Player {
       weapon.isReloading = false;
       weapon.currentReloadTime = 0;
     });
+    
+    // Réinitialiser la direction de regard
+    this.facingDirection = this.color === 'red' ? 1 : -1;
+    this.lastOpponentX = 0;
+    
+    // Réinitialiser le cooldown de téléportation
+    this.teleportCooldown = 0;
+  }
+
+  // Méthode pour obtenir le centre de collision
+  getCollisionCenter() {
+    return {
+      x: this.x + this.width / 2 + this.collisionOffsetX,
+      y: this.y + this.height / 2 + this.collisionOffsetY
+    };
+  }
+
+  // Méthode pour vérifier la collision circulaire avec les murs
+  checkWallCollision(walls, newX, newY) {
+    const testCenter = {
+      x: newX + this.width / 2 + this.collisionOffsetX,
+      y: newY + this.height / 2 + this.collisionOffsetY
+    };
+    
+    for (let wall of walls) {
+      // Collision cercle-rectangle
+      const closestX = Math.max(wall.x, Math.min(testCenter.x, wall.x + wall.width));
+      const closestY = Math.max(wall.y, Math.min(testCenter.y, wall.y + wall.height));
+      
+      const distanceX = testCenter.x - closestX;
+      const distanceY = testCenter.y - closestY;
+      const distanceSquared = distanceX * distanceX + distanceY * distanceY;
+      
+      if (distanceSquared < this.collisionRadius * this.collisionRadius) {
+        return true;
+      }
+    }
+    return false;
   }
 
   moveWithCollision(dx, dy, walls) {
@@ -912,28 +1311,65 @@ class Player {
     
     this.isMoving = (dx !== 0 || dy !== 0);
 
-    // collision horizontal
-    let collisionX = walls.some(wall => wall.collidesWith(newX, this.y, this.width, this.height));
-    if (!collisionX) this.x = newX;
-
-    // collision vertical
-    let collisionY = walls.some(wall => wall.collidesWith(this.x, newY, this.width, this.height));
-    if (!collisionY) this.y = newY;
-
-    // limite du canvas
-    this.x = Math.min(Math.max(this.x, 0), 800 - this.width);
-    this.y = Math.min(Math.max(this.y, 0), 600 - this.height);
-    
-    // Le joueur rouge tire toujours vers la droite
-    if (this.isAnimated) {
-      this.shootDirection = { x: 1, y: 0 };
+    // Collision horizontale avec collision circulaire
+    if (!this.checkWallCollision(walls, newX, this.y)) {
+      this.x = newX;
     }
+
+    // Collision verticale avec collision circulaire
+    if (!this.checkWallCollision(walls, this.x, newY)) {
+      this.y = newY;
+    }
+
+    // Limites du canvas avec collision circulaire
+    const center = this.getCollisionCenter();
+    if (center.x - this.collisionRadius < 0) {
+      this.x = this.collisionRadius - this.width / 2 - this.collisionOffsetX;
+    }
+    if (center.x + this.collisionRadius > 1100) {
+      this.x = 1100 - this.collisionRadius - this.width / 2 - this.collisionOffsetX;
+    }
+    if (center.y - this.collisionRadius < 0) {
+      this.y = this.collisionRadius - this.height / 2 - this.collisionOffsetY;
+    }
+    if (center.y + this.collisionRadius > 750) {
+      this.y = 750 - this.collisionRadius - this.height / 2 - this.collisionOffsetY;
+    }
+    
+    // Suppression de la logique de direction fixe car maintenant gérée par le système de rotation
   }
 
   update(opponent, walls) {
     if (!this.alive) return;
     
     this.animationTime++;
+    
+    // Système de rotation automatique selon la position de l'adversaire
+    if (opponent && opponent.alive) {
+      const myCenter = this.x + this.width / 2;
+      const opponentCenter = opponent.x + opponent.width / 2;
+      
+      // Déterminer la nouvelle direction de regard
+      let newFacingDirection;
+      if (opponentCenter > myCenter) {
+        newFacingDirection = 1; // Regarder vers la droite
+      } else {
+        newFacingDirection = -1; // Regarder vers la gauche
+      }
+      
+      // Changer la direction uniquement si elle est différente
+      if (newFacingDirection !== this.facingDirection) {
+        this.facingDirection = newFacingDirection;
+      }
+      
+      // Mettre à jour la direction de tir selon la nouvelle orientation
+      this.shootDirection = { x: this.facingDirection, y: 0 };
+    }
+    
+    // Décrémenter le cooldown de téléportation
+    if (this.teleportCooldown > 0) {
+      this.teleportCooldown--;
+    }
     
     // Animation du personnage rouge
     if (this.isAnimated) {
@@ -1016,48 +1452,63 @@ class Player {
 
     this.moveWithCollision(moveX, moveY, walls);
 
-    // Direction de tir
-    if (this.color === 'red') {
-      this.shootDirection = { x: 1, y: 0 };
-    } else if (this.color === 'blue') {
-      this.shootDirection = { x: -1, y: 0 };
-    }
+    // La direction de tir est maintenant gérée par le système de rotation automatique
+    // (suppression de l'ancienne logique de direction fixe)
 
-    // Tir bouton X (bouton 2) - impossible si le bouclier est actif, en rechargement ou sans munitions
-    if (this.hasGun && gp.buttons[2].pressed && this.cooldown <= 0 && this.shootDirection && !this.shield.active && !currentWeapon.isReloading && currentWeapon.ammo > 0) {
+    // Tir bouton X (bouton 2) - impossible si en rechargement ou sans munitions
+    if (this.hasGun && gp.buttons[2].pressed && this.cooldown <= 0 && this.shootDirection && !currentWeapon.isReloading && currentWeapon.ammo > 0) {
       this.shoot();
       this.cooldown = this.weapons[this.currentWeapon].cooldown;
       // Effet blanc lors du tir supprimé
     }
     if (this.cooldown > 0) this.cooldown--;
 
-    // Changement d'arme bouton A (bouton 0) - impossible si le bouclier est actif
-    if (gp.buttons[0].pressed && this.cooldown <= 0 && !this.shield.active) {
+    // Changement d'arme bouton A (bouton 0)
+    if (gp.buttons[0].pressed && this.cooldown <= 0) {
       this.currentWeapon = (this.currentWeapon + 1) % this.weapons.length;
       this.cooldown = 10; // Petit cooldown pour éviter les changements trop rapides
     }
 
-    // Bouclier bouton Y (bouton 3)
-    if (gp.buttons[3].pressed) {
-      this.shield.activate(this.x, this.y, this.width, this.height);
-    } else {
-      this.shield.deactivate();
+    // Rechargement manuel bouton B (bouton 1)
+    if (gp.buttons[1].pressed && this.cooldown <= 0 && !currentWeapon.isReloading && currentWeapon.ammo < currentWeapon.maxAmmo) {
+      currentWeapon.isReloading = true;
+      currentWeapon.currentReloadTime = currentWeapon.reloadTime;
+      this.cooldown = 10; // Petit cooldown pour éviter les pressions multiples
     }
-    
-    // Mettre à jour le bouclier
-    this.shield.update();
 
     // Mise à jour des balles
+    // Gestion de la cible LT (bouton 6)
+    if (gp.buttons[6].pressed) {
+      if (!this.targetActive) {
+        this.targetActive = true;
+        this.targetTimer = 300; // 5 secondes à 60 FPS
+        this.targetPos = { x: this.x + this.width / 2, y: this.y + this.height / 2 };
+      }
+      // Déplacement de la cible avec le joystick droit
+      let axisX = gp.axes[2];
+      let axisY = gp.axes[3];
+      if (this.targetPos) {
+        this.targetPos.x += axisX * 6;
+        this.targetPos.y += axisY * 6;
+        this.targetPos.x = Math.max(0, Math.min(1100, this.targetPos.x));
+        this.targetPos.y = Math.max(0, Math.min(750, this.targetPos.y));
+        this.targetTimer--;
+        if (this.targetTimer <= 0) {
+          this.targetActive = false;
+          this.createExplosion(this.targetPos.x, this.targetPos.y);
+        }
+      }
+    } else {
+      // Si LT relâché, déclenche l'explosion si la cible était active
+      if (this.targetActive && this.targetPos) {
+        this.createExplosion(this.targetPos.x, this.targetPos.y);
+        this.targetActive = false;
+      }
+    }
     this.bullets.forEach(b => b.update());
     this.bullets = this.bullets.filter(b => {
       // Collision avec les murs - la balle disparaît immédiatement
       if (walls.some(wall => wall.collidesWith(b.x - b.radius, b.y - b.radius, b.radius * 2, b.radius * 2))) {
-        this.createImpactParticles(b.x, b.y);
-        return false; // Balle supprimée
-      }
-      
-      // Vérifier collision avec le bouclier de l'adversaire - la balle disparaît
-      if (opponent.shield.checkCollision(b)) {
         this.createImpactParticles(b.x, b.y);
         return false; // Balle supprimée
       }
@@ -1205,8 +1656,8 @@ class Player {
       // Dessiner le personnage animé pour le joueur rouge
       this.drawAnimatedCharacter(ctx, playerColor, offsetY);
     } else {
-      // Dessiner le joueur normal (carré coloré) pour le joueur bleu
-      this.drawFallbackPlayer(ctx, playerColor, offsetY);
+      // Dessiner le personnage animé pour le joueur bleu (regarde vers la gauche)
+      this.drawAnimatedCharacter(ctx, playerColor, offsetY);
     }
     
     // Animation de rechargement - barre de progression circulaire
@@ -1265,9 +1716,6 @@ class Player {
     
     ctx.restore();
     
-    // Dessiner le bouclier
-    this.shield.draw(ctx);
-    
     // Dessiner les particules
     this.particles.forEach(particle => particle.draw(ctx));
     
@@ -1276,12 +1724,42 @@ class Player {
     
     // Dessiner les balles
     this.bullets.forEach(b => b.draw(ctx));
+
+    // Dessiner la cible si active (LT)
+    if (this.targetActive && this.targetPos) {
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#ff0';
+      ctx.shadowBlur = 12;
+      // Cercle central
+      ctx.beginPath();
+      ctx.arc(this.targetPos.x, this.targetPos.y, 28, 0, 2 * Math.PI);
+      ctx.stroke();
+      // 4 traits autour
+      for (let i = 0; i < 4; i++) {
+        const angle = i * Math.PI / 2;
+        const x1 = this.targetPos.x + Math.cos(angle) * 38;
+        const y1 = this.targetPos.y + Math.sin(angle) * 38;
+        const x2 = this.targetPos.x + Math.cos(angle) * 52;
+        const y2 = this.targetPos.y + Math.sin(angle) * 52;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
   }
 
   // Méthode pour dessiner le personnage animé (mini-personnage avec tête, corps, bras, jambes)
   drawAnimatedCharacter(ctx, playerColor, offsetY) {
     const centerX = this.x + this.width / 2 + this.recoilOffset; // Appliquer le décalage de recul
     const centerY = this.y + this.height / 2 + offsetY;
+    
+    // Déterminer la direction selon la facingDirection (plus selon la couleur)
+    const isLookingLeft = (this.facingDirection === -1);
+    const directionMultiplier = isLookingLeft ? -1 : 1;
     
     ctx.save();
     
@@ -1302,8 +1780,8 @@ class Player {
     // === PERSONNAGE SIMPLIFIÉ : TÊTE ET ARME SEULEMENT ===
     
     // === TÊTE (vue de haut) ===
-    const headSize = 20; // Taille de la tête
-    const headY = centerY - 10; // Position Y centrée
+    const headSize = 30; // Taille de la tête augmentée
+    const headY = centerY; // Position Y parfaitement centrée
     
     // Tête en forme de cercle
     ctx.fillStyle = headColor;
@@ -1321,73 +1799,172 @@ class Player {
     // Yeux (petits points)
     ctx.fillStyle = '#000000';
     ctx.beginPath();
-    ctx.arc(centerX - 3, headY - 1, 1, 0, 2 * Math.PI);
+    ctx.arc(centerX - 4 * directionMultiplier, headY - 2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(centerX + 3, headY - 1, 1, 0, 2 * Math.PI);
+    ctx.arc(centerX + 4 * directionMultiplier, headY - 2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     
     // Nez (petit point)
     ctx.beginPath();
-    ctx.arc(centerX, headY + 1, 0.5, 0, 2 * Math.PI);
+    ctx.arc(centerX, headY + 2, 0.8, 0, 2 * Math.PI);
     ctx.fill();
     
     // === ARME PERMANENTE (vue de haut selon l'arme équipée) ===
-    const weaponBaseX = centerX + 15; // Position à droite de la tête
-    const weaponBaseY = centerY - 5; // Au niveau de la tête
+    const weaponBaseX = centerX + (20 * directionMultiplier); // Position selon la direction (augmentée)
+    const weaponBaseY = centerY; // Au niveau du centre du personnage
     
     if (currentWeapon.name === "Glock17") {
       // === GLOCK17 (vue de haut simplifiée) ===
       // Corps principal du pistolet
       ctx.fillStyle = '#666666'; // Gris métallique
-      ctx.fillRect(weaponBaseX, weaponBaseY, 12, 3); // Forme allongée horizontale
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 16, weaponBaseY, 16, 4); // Forme allongée horizontale (inversée et agrandie)
+      } else {
+        ctx.fillRect(weaponBaseX, weaponBaseY, 16, 4); // Forme allongée horizontale (agrandie)
+      }
       
       // Canon du pistolet
       ctx.fillStyle = '#222222'; // Très foncé
-      ctx.fillRect(weaponBaseX + 12, weaponBaseY + 0.5, 8, 2); // Canon
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 26, weaponBaseY - 1.5, 10, 3); // Canon (inversé et agrandi)
+      } else {
+        ctx.fillRect(weaponBaseX + 16, weaponBaseY - 1.5, 10, 3); // Canon (agrandi)
+      }
       
       // Crosse du pistolet
       ctx.fillStyle = '#333333'; // Gris foncé
-      ctx.fillRect(weaponBaseX - 3, weaponBaseY - 1, 6, 5); // Crosse
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 4, weaponBaseY - 3, 8, 6); // Crosse (inversée et agrandie)
+      } else {
+        ctx.fillRect(weaponBaseX - 4, weaponBaseY - 3, 8, 6); // Crosse (agrandie)
+      }
       
     } else if (currentWeapon.name === "AK47") {
       // === AK47 (vue de haut simplifiée) ===
       // Crosse
       ctx.fillStyle = '#8B4513'; // Marron foncé pour le bois
-      ctx.fillRect(weaponBaseX - 8, weaponBaseY - 2, 10, 6); // Crosse large
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 3, weaponBaseY - 4, 13, 8); // Crosse large (inversée et agrandie)
+      } else {
+        ctx.fillRect(weaponBaseX - 10, weaponBaseY - 4, 13, 8); // Crosse large (agrandie)
+      }
       
       // Corps principal (receiver)
       ctx.fillStyle = '#555555'; // Gris métallique foncé
-      ctx.fillRect(weaponBaseX + 2, weaponBaseY - 1, 18, 4); // Corps allongé
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 26, weaponBaseY - 2.5, 24, 5); // Corps allongé (inversé et agrandi)
+      } else {
+        ctx.fillRect(weaponBaseX + 3, weaponBaseY - 2.5, 24, 5); // Corps allongé (agrandi)
+      }
       
       // Canon long
       ctx.fillStyle = '#333333'; // Gris très foncé
-      ctx.fillRect(weaponBaseX + 20, weaponBaseY, 15, 2); // Canon long
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 46, weaponBaseY - 1.5, 20, 3); // Canon long (inversé et agrandi)
+      } else {
+        ctx.fillRect(weaponBaseX + 27, weaponBaseY - 1.5, 20, 3); // Canon long (agrandi)
+      }
       
       // Chargeur (visible depuis le haut)
       ctx.fillStyle = '#444444';
-      ctx.fillRect(weaponBaseX + 8, weaponBaseY + 3, 6, 8); // Chargeur qui dépasse
+      if (isLookingLeft) {
+        ctx.fillRect(weaponBaseX - 18, weaponBaseY + 2.5, 8, 10); // Chargeur qui dépasse (inversé et agrandi)
+      } else {
+        ctx.fillRect(weaponBaseX + 10, weaponBaseY + 2.5, 8, 10); // Chargeur qui dépasse (agrandi)
+      }
     }
     
     // === FLASH DE TIR (si en train de tirer) ===
     if (this.cooldown > this.cooldownMax - 5) {
-      const flashX = currentWeapon.name === "Glock17" ? weaponBaseX + 20 : weaponBaseX + 35;
-      const flashY = weaponBaseY + 0.5;
+      let flashX, flashY;
+      
+      if (isLookingLeft) {
+        flashX = currentWeapon.name === "Glock17" ? weaponBaseX - 26 : weaponBaseX - 46;
+      } else {
+        flashX = currentWeapon.name === "Glock17" ? weaponBaseX + 26 : weaponBaseX + 47;
+      }
+      flashY = weaponBaseY;
       
       // Flash de tir adapté à la vue de haut
       ctx.fillStyle = '#FFFF00'; // Jaune vif
-      const flashSize = currentWeapon.name === "Glock17" ? 4 : 6;
-      ctx.fillRect(flashX, flashY, flashSize, 1);
+      const flashSize = currentWeapon.name === "Glock17" ? 6 : 8; // Taille augmentée
       
-      ctx.fillStyle = '#FFA500'; // Orange
-      ctx.fillRect(flashX + 1, flashY - 0.5, flashSize - 1, 2);
-      
-      ctx.fillStyle = '#FF0000'; // Rouge au centre
-      ctx.fillRect(flashX + 2, flashY - 0.3, flashSize - 3, 1.6);
+      if (isLookingLeft) {
+        ctx.fillRect(flashX - flashSize, flashY, flashSize, 2);
+        ctx.fillStyle = '#FFA500'; // Orange
+        ctx.fillRect(flashX - flashSize + 1, flashY - 0.5, flashSize - 1, 3);
+        ctx.fillStyle = '#FF0000'; // Rouge au centre
+        ctx.fillRect(flashX - flashSize + 2, flashY - 0.3, flashSize - 3, 2.6);
+      } else {
+        ctx.fillRect(flashX, flashY, flashSize, 2);
+        ctx.fillStyle = '#FFA500'; // Orange
+        ctx.fillRect(flashX + 1, flashY - 0.5, flashSize - 1, 3);
+        ctx.fillStyle = '#FF0000'; // Rouge au centre
+        ctx.fillRect(flashX + 2, flashY - 0.3, flashSize - 3, 2.6);
+      }
     }
     
     ctx.filter = 'none'; // Réinitialiser le filtre
     ctx.restore();
+    
+    // Optionnel : Dessiner la zone de collision pour le debug (peut être retiré)
+    // ctx.save();
+    // ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
+    // ctx.lineWidth = 1;
+    // const collisionCenter = this.getCollisionCenter();
+    // ctx.beginPath();
+    // ctx.arc(collisionCenter.x, collisionCenter.y, this.collisionRadius, 0, 2 * Math.PI);
+    // ctx.stroke();
+    // ctx.restore();
+    
+    // Affichage du cooldown de téléportation
+    if (this.teleportCooldown > 0) {
+      const centerX = this.x + this.width / 2;
+      const centerY = this.y + this.height / 2;
+      const radius = 25;
+      
+      // Calculer le pourcentage du cooldown
+      const cooldownPercent = this.teleportCooldown / this.maxTeleportCooldown;
+      const angle = (cooldownPercent * 2 * Math.PI) - Math.PI / 2;
+      
+      // Cercle de fond pour le cooldown
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Barre de progression circulaire du cooldown
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, angle);
+      ctx.strokeStyle = '#ff4444';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = '#ff4444';
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      
+      // Icône de téléportation bloquée au centre
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ff4444';
+      ctx.shadowColor = '#ff4444';
+      ctx.shadowBlur = 5;
+      ctx.fillText('🚫', centerX, centerY);
+      
+      // Temps restant
+      const secondsLeft = Math.ceil(this.teleportCooldown / 60);
+      ctx.font = 'bold 12px Orbitron';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 3;
+      ctx.fillText(`${secondsLeft}s`, centerX, centerY + 35);
+      
+      ctx.restore();
+    }
   }
 
   // Méthode pour dessiner le joueur de base (fallback)
@@ -1403,10 +1980,12 @@ class Player {
 
 // Variables globales
 const canvas = document.getElementById('gameCanvas');
+window.explosionHoles = window.explosionHoles || [];
+window.explosionHoles = window.explosionHoles || [];
 const ctx = canvas.getContext('2d');
 
-let player1 = new Player(100, 300, 'red', 0);
-let player2 = new Player(700, 300, 'blue', 1);
+let player1 = new Player(150, 375, 'red', 0);
+let player2 = new Player(900, 375, 'blue', 1);
 let gameRunning = false;
 let gamePaused = false;
 let backgroundParticles = [];
@@ -1461,118 +2040,338 @@ function drawBackgroundParticles() {
 function drawHealthBars() {
   ctx.save();
   ctx.shadowBlur = 0;
-  ctx.font = "bold 24px Orbitron";
   
-  // Vie du joueur rouge (en haut à gauche)
-  ctx.fillStyle = "red";
-  ctx.shadowColor = "red";
+  // === INTERFACE JOUEUR ROUGE (gauche) ===
+  const player1X = 20;
+  const player1Y = 20;
+  const panelWidth = 280;
+  const panelHeight = 100;
+  
+  // Panneau de fond avec dégradé et effet de lueur
+  ctx.fillStyle = 'rgba(139, 0, 0, 0.8)';
+  ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = 'rgba(255, 0, 0, 0.5)';
+  ctx.shadowBlur = 15;
+  
+  // Forme du panneau avec coins arrondis
+  ctx.beginPath();
+  ctx.roundRect(player1X - 5, player1Y - 5, panelWidth, panelHeight, 15);
+  ctx.fill();
+  ctx.stroke();
+  
+  // Effet de brillance sur le panneau
+  const gradient1 = ctx.createLinearGradient(player1X, player1Y, player1X, player1Y + panelHeight);
+  gradient1.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+  gradient1.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
+  gradient1.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+  ctx.fillStyle = gradient1;
+  ctx.fill();
+  
+  // Barre de vie joueur rouge
+  ctx.font = "bold 20px Orbitron";
+  ctx.fillStyle = "#FF6B6B";
+  ctx.shadowColor = "#FF6B6B";
   ctx.shadowBlur = 10;
   ctx.textAlign = "left";
-  const player1Health = `❤️ ${player1.health}`;
-  ctx.fillText(player1Health, 20, 35);
+  ctx.fillText("❤️ VIE", player1X + 10, player1Y + 25);
   
-  // Arme du joueur rouge (sous la vie)
-  ctx.font = "bold 16px Orbitron";
-  ctx.fillStyle = "white";
-  ctx.shadowColor = "white";
+  // Barre de vie graphique
+  const healthBarWidth = 150;
+  const healthBarHeight = 8;
+  const healthBarX = player1X + 10;
+  const healthBarY = player1Y + 32;
+  
+  // Fond de la barre de vie
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+  
+  // Barre de vie actuelle
+  const healthPercent = player1.health / 10;
+  const healthColor = healthPercent > 0.6 ? '#00FF00' : healthPercent > 0.3 ? '#FFA500' : '#FF0000';
+  
+  const healthGradient = ctx.createLinearGradient(healthBarX, healthBarY, healthBarX + healthBarWidth, healthBarY);
+  healthGradient.addColorStop(0, healthColor);
+  healthGradient.addColorStop(1, healthColor + '80');
+  
+  ctx.fillStyle = healthGradient;
+  ctx.shadowColor = healthColor;
+  ctx.shadowBlur = 8;
+  ctx.fillRect(healthBarX, healthBarY, healthBarWidth * healthPercent, healthBarHeight);
+  
+  // Texte de la vie
+  ctx.font = "bold 14px Orbitron";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.shadowColor = "#FFFFFF";
   ctx.shadowBlur = 5;
+  ctx.textAlign = "right";
+  ctx.fillText(`${player1.health}/10`, healthBarX + healthBarWidth + 15, healthBarY + 6);
+  
+  // Arme du joueur rouge
+  ctx.font = "bold 16px Orbitron";
+  ctx.fillStyle = "#FFD700";
+  ctx.shadowColor = "#FFD700";
+  ctx.shadowBlur = 8;
+  ctx.textAlign = "left";
   const player1Weapon = `🔫 ${player1.weapons[player1.currentWeapon].name}`;
-  ctx.fillText(player1Weapon, 20, 55);
+  ctx.fillText(player1Weapon, player1X + 10, player1Y + 58);
   
   // Munitions du joueur rouge
   ctx.font = "bold 14px Orbitron";
   const currentWeapon1 = player1.weapons[player1.currentWeapon];
   if (currentWeapon1.isReloading) {
-    ctx.fillStyle = "orange";
-    ctx.shadowColor = "orange";
-    ctx.fillText(`🔄 Rechargement...`, 20, 95);
+    ctx.fillStyle = "#FF8C00";
+    ctx.shadowColor = "#FF8C00";
+    ctx.shadowBlur = 10;
+    ctx.fillText(`🔄 RECHARGEMENT...`, player1X + 10, player1Y + 78);
+    
+    // Barre de rechargement
+    const reloadPercent = 1 - (currentWeapon1.currentReloadTime / currentWeapon1.reloadTime);
+    const reloadBarWidth = 100;
+    const reloadBarHeight = 4;
+    const reloadBarX = player1X + 150;
+    const reloadBarY = player1Y + 74;
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(reloadBarX, reloadBarY, reloadBarWidth, reloadBarHeight);
+    
+    ctx.fillStyle = '#FF8C00';
+    ctx.shadowBlur = 5;
+    ctx.fillRect(reloadBarX, reloadBarY, reloadBarWidth * reloadPercent, reloadBarHeight);
+    
   } else {
-    ctx.fillStyle = "cyan";
-    ctx.shadowColor = "cyan";
-    ctx.fillText(`💥 ${currentWeapon1.ammo}/${currentWeapon1.maxAmmo}`, 20, 95);
+    ctx.fillStyle = "#00FFFF";
+    ctx.shadowColor = "#00FFFF";
+    ctx.shadowBlur = 8;
+    ctx.fillText(`💥 MUNITIONS`, player1X + 10, player1Y + 78);
+    
+    // Indicateur de munitions
+    ctx.font = "bold 16px Orbitron";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.shadowColor = "#FFFFFF";
+    ctx.shadowBlur = 5;
+    ctx.textAlign = "right";
+    ctx.fillText(`${currentWeapon1.ammo}/${currentWeapon1.maxAmmo}`, player1X + 260, player1Y + 78);
   }
   
-  // Statut du bouclier du joueur rouge
-  ctx.font = "bold 14px Orbitron";
-  if (player1.shield.active) {
-    ctx.fillStyle = "yellow";
-    ctx.shadowColor = "yellow";
-    const timeLeft = Math.ceil((player1.shield.maxActiveTime - player1.shield.activeTime) / 60);
-    const hitsLeft = player1.shield.maxHits - player1.shield.hitsTaken;
-    ctx.fillText(`🛡️ ${timeLeft}s | ${hitsLeft} hits`, 20, 115);
-  } else if (player1.shield.cooldownTime > 0) {
-    ctx.fillStyle = "gray";
-    ctx.shadowColor = "gray";
-    const cooldownLeft = Math.ceil(player1.shield.cooldownTime / 60);
-    ctx.fillText(`🛡️ Cooldown: ${cooldownLeft}s`, 20, 115);
-  } else {
-    ctx.fillStyle = "green";
-    ctx.shadowColor = "green";
-    ctx.fillText(`🛡️ Prêt`, 20, 115);
+  // Indicateur de cooldown de téléportation pour le joueur rouge
+  if (player1.teleportCooldown > 0) {
+    ctx.font = "bold 12px Orbitron";
+    ctx.fillStyle = "#FF4444";
+    ctx.shadowColor = "#FF4444";
+    ctx.shadowBlur = 8;
+    ctx.textAlign = "left";
+    const teleportSecondsLeft = Math.ceil(player1.teleportCooldown / 60);
+    ctx.fillText(`🚫 TÉLÉPORTATION: ${teleportSecondsLeft}s`, player1X + 10, player1Y + 95);
   }
   
-  // Vie du joueur bleu (en haut à droite)
-  ctx.font = "bold 24px Orbitron";
-  ctx.fillStyle = "blue";
-  ctx.shadowColor = "blue";
+  // === INTERFACE JOUEUR BLEU (droite) ===
+  const player2X = canvas.width - panelWidth - 15;
+  const player2Y = 20;
+  
+  // Panneau de fond avec dégradé et effet de lueur
+  ctx.fillStyle = 'rgba(0, 0, 139, 0.8)';
+  ctx.strokeStyle = 'rgba(0, 0, 255, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = 'rgba(0, 0, 255, 0.5)';
+  ctx.shadowBlur = 15;
+  
+  // Forme du panneau avec coins arrondis
+  ctx.beginPath();
+  ctx.roundRect(player2X - 5, player2Y - 5, panelWidth, panelHeight, 15);
+  ctx.fill();
+  ctx.stroke();
+  
+  // Effet de brillance sur le panneau
+  const gradient2 = ctx.createLinearGradient(player2X, player2Y, player2X, player2Y + panelHeight);
+  gradient2.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+  gradient2.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
+  gradient2.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+  ctx.fillStyle = gradient2;
+  ctx.fill();
+  
+  // Barre de vie joueur bleu
+  ctx.font = "bold 20px Orbitron";
+  ctx.fillStyle = "#6B6BFF";
+  ctx.shadowColor = "#6B6BFF";
   ctx.shadowBlur = 10;
   ctx.textAlign = "right";
-  const player2Health = `❤️ ${player2.health}`;
-  ctx.fillText(player2Health, canvas.width - 20, 35);
+  ctx.fillText("VIE ❤️", player2X + panelWidth - 10, player2Y + 25);
   
-  // Arme du joueur bleu (sous la vie)
-  ctx.font = "bold 16px Orbitron";
-  ctx.fillStyle = "white";
-  ctx.shadowColor = "white";
+  // Barre de vie graphique
+  const healthBarX2 = player2X + panelWidth - healthBarWidth - 10;
+  const healthBarY2 = player2Y + 32;
+  
+  // Fond de la barre de vie
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillRect(healthBarX2, healthBarY2, healthBarWidth, healthBarHeight);
+  
+  // Barre de vie actuelle
+  const healthPercent2 = player2.health / 10;
+  const healthColor2 = healthPercent2 > 0.6 ? '#00FF00' : healthPercent2 > 0.3 ? '#FFA500' : '#FF0000';
+  
+  const healthGradient2 = ctx.createLinearGradient(healthBarX2, healthBarY2, healthBarX2 + healthBarWidth, healthBarY2);
+  healthGradient2.addColorStop(0, healthColor2);
+  healthGradient2.addColorStop(1, healthColor2 + '80');
+  
+  ctx.fillStyle = healthGradient2;
+  ctx.shadowColor = healthColor2;
+  ctx.shadowBlur = 8;
+  ctx.fillRect(healthBarX2, healthBarY2, healthBarWidth * healthPercent2, healthBarHeight);
+  
+  // Texte de la vie
+  ctx.font = "bold 14px Orbitron";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.shadowColor = "#FFFFFF";
   ctx.shadowBlur = 5;
-  const player2Weapon = `🔫 ${player2.weapons[player2.currentWeapon].name}`;
-  ctx.fillText(player2Weapon, canvas.width - 20, 55);
+  ctx.textAlign = "left";
+  ctx.fillText(`${player2.health}/10`, healthBarX2 - 30, healthBarY2 + 6);
+  
+  // Arme du joueur bleu
+  ctx.font = "bold 16px Orbitron";
+  ctx.fillStyle = "#FFD700";
+  ctx.shadowColor = "#FFD700";
+  ctx.shadowBlur = 8;
+  ctx.textAlign = "right";
+  const player2Weapon = `${player2.weapons[player2.currentWeapon].name} 🔫`;
+  ctx.fillText(player2Weapon, player2X + panelWidth - 10, player2Y + 58);
   
   // Munitions du joueur bleu
   ctx.font = "bold 14px Orbitron";
   const currentWeapon2 = player2.weapons[player2.currentWeapon];
   if (currentWeapon2.isReloading) {
-    ctx.fillStyle = "orange";
-    ctx.shadowColor = "orange";
-    ctx.fillText(`🔄 Rechargement...`, canvas.width - 20, 95);
+    ctx.fillStyle = "#FF8C00";
+    ctx.shadowColor = "#FF8C00";
+    ctx.shadowBlur = 10;
+    ctx.textAlign = "right";
+    ctx.fillText(`...RECHARGEMENT 🔄`, player2X + panelWidth - 10, player2Y + 78);
+    
+    // Barre de rechargement
+    const reloadPercent2 = 1 - (currentWeapon2.currentReloadTime / currentWeapon2.reloadTime);
+    const reloadBarWidth2 = 100;
+    const reloadBarHeight2 = 4;
+    const reloadBarX2 = player2X + 20;
+    const reloadBarY2 = player2Y + 74;
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(reloadBarX2, reloadBarY2, reloadBarWidth2, reloadBarHeight2);
+    
+    ctx.fillStyle = '#FF8C00';
+    ctx.shadowBlur = 5;
+    ctx.fillRect(reloadBarX2, reloadBarY2, reloadBarWidth2 * reloadPercent2, reloadBarHeight2);
+    
   } else {
-    ctx.fillStyle = "cyan";
-    ctx.shadowColor = "cyan";
-    ctx.fillText(`💥 ${currentWeapon2.ammo}/${currentWeapon2.maxAmmo}`, canvas.width - 20, 95);
+    ctx.fillStyle = "#00FFFF";
+    ctx.shadowColor = "#00FFFF";
+    ctx.shadowBlur = 8;
+    ctx.textAlign = "right";
+    ctx.fillText(`MUNITIONS 💥`, player2X + panelWidth - 10, player2Y + 78);
+    
+    // Indicateur de munitions
+    ctx.font = "bold 16px Orbitron";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.shadowColor = "#FFFFFF";
+    ctx.shadowBlur = 5;
+    ctx.textAlign = "left";
+    ctx.fillText(`${currentWeapon2.ammo}/${currentWeapon2.maxAmmo}`, player2X + 10, player2Y + 78);
   }
   
-  // Statut du bouclier du joueur bleu
-  ctx.font = "bold 14px Orbitron";
-  if (player2.shield.active) {
-    ctx.fillStyle = "yellow";
-    ctx.shadowColor = "yellow";
-    const timeLeft = Math.ceil((player2.shield.maxActiveTime - player2.shield.activeTime) / 60);
-    const hitsLeft = player2.shield.maxHits - player2.shield.hitsTaken;
-    ctx.fillText(`🛡️ ${timeLeft}s | ${hitsLeft} hits`, canvas.width - 20, 115);
-  } else if (player2.shield.cooldownTime > 0) {
-    ctx.fillStyle = "gray";
-    ctx.shadowColor = "gray";
-    const cooldownLeft = Math.ceil(player2.shield.cooldownTime / 60);
-    ctx.fillText(`🛡️ Cooldown: ${cooldownLeft}s`, canvas.width - 20, 115);
-  } else {
-    ctx.fillStyle = "green";
-    ctx.shadowColor = "green";
-    ctx.fillText(`🛡️ Prêt`, canvas.width - 20, 115);
+  // Indicateur de cooldown de téléportation pour le joueur bleu
+  if (player2.teleportCooldown > 0) {
+    ctx.font = "bold 12px Orbitron";
+    ctx.fillStyle = "#FF4444";
+    ctx.shadowColor = "#FF4444";
+    ctx.shadowBlur = 8;
+    ctx.textAlign = "right";
+    const teleportSecondsLeft = Math.ceil(player2.teleportCooldown / 60);
+    ctx.fillText(`${teleportSecondsLeft}s :TÉLÉPORTATION 🚫`, player2X + panelWidth - 10, player2Y + 95);
+  }
+  
+  // Effets de particules autour des panneaux
+  const time = Date.now() * 0.001;
+  
+  // Particules pour le joueur rouge
+  for (let i = 0; i < 3; i++) {
+    const angle = time + i * 2;
+    const x = player1X + panelWidth/2 + Math.cos(angle) * 20;
+    const y = player1Y + panelHeight/2 + Math.sin(angle) * 10;
+    
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+  
+  // Particules pour le joueur bleu
+  for (let i = 0; i < 3; i++) {
+    const angle = time + i * 2;
+    const x = player2X + panelWidth/2 + Math.cos(angle) * 20;
+    const y = player2Y + panelHeight/2 + Math.sin(angle) * 10;
+    
+    ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, 2 * Math.PI);
+    ctx.fill();
   }
   
   ctx.restore();
 }
 
 const walls = [
-  // le mur de font le contour du canvas
-  new Wall(0, 0, canvas.width, 10),
-  new Wall(0, 0, 10, canvas.height),
-  new Wall(canvas.width - 20, 0, 20, canvas.height),
-  new Wall(0, canvas.height - 20, canvas.width, 20),
-  new Wall(350, 25, 50, 100),
-  new Wall(250, 480, 50, 100),
-  new Wall(150, 150, 50, 150),
-  new Wall(600, 400, 50, 150)
+  // Murs extérieurs (contour de l'arène)
+  new Wall(0, 0, canvas.width, 20), // Mur du haut
+  new Wall(0, 0, 20, canvas.height), // Mur de gauche
+  new Wall(canvas.width - 20, 0, 20, canvas.height), // Mur de droite
+  new Wall(0, canvas.height - 20, canvas.width, 20), // Mur du bas
+  
+  // Murs intérieurs formant l'arène (disposition en carré avec ouvertures)
+  // Mur supérieur central avec ouverture
+  new Wall(200, 100, 250, 30),
+  new Wall(650, 100, 250, 30),
+  
+  // Mur inférieur central avec ouverture
+  new Wall(200, 620, 250, 30),
+  new Wall(650, 620, 250, 30),
+  
+  // Murs latéraux gauches avec ouvertures
+  new Wall(100, 150, 30, 180),
+  new Wall(100, 420, 30, 180),
+  
+  // Murs latéraux droits avec ouvertures
+  new Wall(970, 150, 30, 180),
+  new Wall(970, 420, 30, 180),
+  
+  // Obstacles centraux pour créer de la stratégie
+  new Wall(400, 250, 80, 80),
+  new Wall(620, 420, 80, 80),
+  new Wall(300, 450, 60, 60),
+  new Wall(740, 280, 60, 60),
+  
+  // Petits murs pour créer des zones de couverture
+  new Wall(250, 300, 40, 100),
+  new Wall(810, 350, 40, 100),
+];
+
+// Portails de téléportation connectés entre eux
+const portals = [
+  // Portail bleu en haut à gauche -> téléporte vers portail rouge en bas à droite
+  new Portal(50, 50, 60, 60, 990, 640, "0, 150, 255"), // Bleu
+  
+  // Portail rouge en bas à droite -> téléporte vers portail bleu en haut à gauche
+  new Portal(990, 640, 60, 60, 50, 50, "255, 50, 50"), // Rouge
+  
+  // Portail vert à droite -> téléporte vers portail violet à gauche
+  new Portal(1020, 300, 60, 60, 20, 450, "50, 255, 50"), // Vert
+  
+  // Portail violet à gauche -> téléporte vers portail vert à droite
+  new Portal(20, 450, 60, 60, 1020, 300, "150, 50, 255"), // Violet
+  
+  // Portails centraux pour traverser l'arène rapidement
+  // Portail orange en haut -> téléporte vers portail cyan en bas
+  new Portal(520, 50, 60, 60, 520, 640, "255, 150, 0"), // Orange
+  
+  // Portail cyan en bas -> téléporte vers portail orange en haut
+  new Portal(520, 640, 60, 60, 520, 50, "0, 255, 255"), // Cyan
 ];
 
 // Gestion dynamique des gamepads
@@ -1585,26 +2384,43 @@ function gameLoop() {
   
   gameTime++;
   
-  // Vérifier si le bouton Start (bouton 9) est pressé sur l'une des manettes
+  // Gestion du bouton Start (gamepad button 9) pour pause/play
   const gamepads = navigator.getGamepads();
   for (let i = 0; i < gamepads.length; i++) {
     const gp = gamepads[i];
-    if (gp && gp.buttons[9] && gp.buttons[9].pressed) {
-      // Éviter les pressions multiples avec un petit délai
-      if (!gp.startPressed) {
-        gp.startPressed = true;
-        togglePause();
-        setTimeout(() => {
-          if (gp) gp.startPressed = false;
-        }, 300);
+    if (gp && gp.buttons[9]) {
+      if (gp.buttons[9].pressed) {
+        if (!gp._startPressed) {
+          gp._startPressed = true;
+          togglePause();
+        }
+      } else {
+        gp._startPressed = false;
       }
-      break;
     }
   }
   
   // Effacer le canvas avec un effet de fondu
   ctx.fillStyle = 'rgba(16, 26, 62, 0.1)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Dessiner les trous d'explosion dans le sol
+  if (window.explosionHoles) {
+    window.explosionHoles.forEach(hole => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(hole.x, hole.y, hole.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(30,30,30,0.85)';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 18;
+      ctx.fill();
+      // Bordure irrégulière
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'rgba(60,60,60,0.7)';
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
   
   // Dessiner les particules d'arrière-plan
   drawBackgroundParticles();
@@ -1613,9 +2429,25 @@ function gameLoop() {
   // Dessiner les murs
   walls.forEach(wall => wall.draw(ctx));
   
+  // Mettre à jour et dessiner les portails
+  portals.forEach(portal => {
+    portal.update();
+    portal.draw(ctx);
+  });
+  
   // Mettre à jour et dessiner les joueurs
   player1.update(player2, walls);
   player2.update(player1, walls);
+  
+  // Vérifier les collisions avec les portails
+  portals.forEach(portal => {
+    if (portal.checkCollision(player1)) {
+      portal.teleport(player1);
+    }
+    if (portal.checkCollision(player2)) {
+      portal.teleport(player2);
+    }
+  });
   
   player1.draw(ctx);
   player2.draw(ctx);
@@ -1663,8 +2495,8 @@ function showEndScreen(winnerColor) {
 }
 
 function startGame() {
-  player1.reset(100, 300);
-  player2.reset(700, 300);
+  player1.reset(150, 375);
+  player2.reset(900, 375);
   
   // Animations de sortie des écrans
   const screens = ["startScreen", "endScreen", "pauseScreen"];
